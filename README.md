@@ -16,11 +16,8 @@
 
 **Frontend:**
 *   HTML5, CSS3
-*   JavaScript, Fetch API для работы с бэкендом
+*   JavaScript
 
 **Backend:**
 *   Node.js
-*   Express.js
 *   SQLite3
-*   Bcrypt.js
-*   JSON Web Tokens
