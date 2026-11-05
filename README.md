@@ -21,3 +21,12 @@
 **Backend:**
 *   Node.js
 *   SQLite3
+
+
+## Как запустить?
+
+Запускаем при помощи терминала из папки проекта:
+```
+node server.js
+```
+Далее в Visual Studio Code открываем index.html ==> Open with Live Server.
