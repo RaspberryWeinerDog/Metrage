@@ -46,6 +46,7 @@
  ┣ 📜 wallpaper.html        # Калькулятор обоев
  ┣ 📜 floor.html            # Калькулятор пола/потолка
  ┗ 📜 README.md             # Описание проекта
+```
 
 🚀 Как запустить проект
 
@@ -124,6 +125,7 @@ The application helps people without professional experience accurately calculat
  ┣ 📜 wallpaper.html        # Wallpaper calculator
  ┣ 📜 floor.html            # Floor/ceiling calculator
  ┗ 📜 README.md             # Project description
+```
 
  🚀 How to run the project
 
