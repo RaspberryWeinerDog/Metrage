@@ -146,7 +146,7 @@ bash
 
 node server.js
 
-You should see the message in the terminal: Сервер запущен на http://localhost:3000 and Подключено к базе данных SQLite. Do not close this terminal window while using the website.
+You should see the message in the terminal: Server is running on http://localhost:3000" and "Connected to SQLite database. Do not close this terminal window while using the website.
 
 3. Start the Frontend:
 
