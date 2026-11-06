@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Metrage | Мои расчеты</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Стили, которые применяются ТОЛЬКО при печати (экспорте в PDF) */
+        @media print {
+            body { background: white; padding: 0; }
+            header, .back-btn, .no-print, #btn-logout, #btn-history, .logo { display: none !important; }
+            .container { max-width: 100%; margin: 0; }
+            .calc-panel { box-shadow: none; border: none; padding: 0; }
+            .history-item { page-break-inside: avoid; border: 1px solid #ccc; margin-bottom: 20px; }
+            .print-header { display: block !important; text-align: center; margin-bottom: 30px; }
+            .print-header h1 { font-size: 24px; color: #000; }
+        }
+        .print-header { display: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Шапка, которая скроется при печати -->
+    <header class="no-print">
+        <a href="index.html" class="logo">Metrage</a>
+        <div class="auth-status">
+            <span id="user-name" class="hidden"></span>
+            <a href="login.html" id="btn-login" class="btn-auth">Войти</a>
+            <button id="btn-logout" class="btn-auth btn-outline hidden" onclick="logout()">Выйти</button>
+            <a href="history.html" id="btn-history" class="btn-auth btn-outline hidden">Мои расчеты</a>
+        </div>
+    </header>
+
+    <div class="calc-panel">
+        <!-- Заголовок для печатной версии -->
+        <div class="print-header">
+            <h1>Сводная ведомость расчетов — Metrage</h1>
+            <p>Сформировано: <span id="print-date"></span></p>
+        </div>
+
+        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="index.html" class="back-btn">← На главную</a>
+            <button id="btn-export-pdf" class="btn-auth" onclick="exportToPDF()" style="display: none;">📥 Экспорт в PDF</button>
+        </div>
+        
+        <h2 class="no-print" style="margin-top: 15px;">Мои сохраненные расчеты</h2>
+        <div id="history-list" style="margin-top: 20px;">Загрузка...</div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    // Функция экспорта (вызывает системное окно печати)
+    function exportToPDF() {
+        window.print();
+    }
+
+    async function loadHistory() {
+        const list = document.getElementById('history-list');
+        const exportBtn = document.getElementById('btn-export-pdf');
+        
+        if (!localStorage.getItem('token')) {
+            list.innerHTML = '<p>Пожалуйста, войдите в аккаунт.</p>';
+            return;
+        }
+
+        try {
+            const data = await fetchAPI('/history');
+            if (data.length === 0) {
+                list.innerHTML = '<p>У вас пока нет сохраненных расчетов.</p>';
+                exportBtn.style.display = 'none';
+                return;
+            }
+
+            // Показываем кнопку экспорта, если есть расчеты
+            exportBtn.style.display = 'block';
+
+            list.innerHTML = data.map(item => {
+                let detailsHtml = '';
+                
+                // Красивое форматирование в зависимости от типа
+                if (item.calc_type === 'paint') {
+                    detailsHtml = `
+                        <div class="result-title">Итог: ${item.result_data.cans} банок(и)</div>
+                        <div>Площадь стен: ${item.result_data.details.sWalls} м²</div>
+                        <div>Полезная площадь: ${item.result_data.details.sUseful} м²</div>
+                    `;
+                } else if (item.calc_type === 'tile') {
+                    detailsHtml = `
+                        <div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div>
+                        <div>Площадь поверхности: ${item.result_data.details.area} м²</div>
+                        <div>Требуется плиток: ${item.result_data.details.totalTiles} шт.</div>
+                    `;
+                } else if (item.calc_type === 'wallpaper') {
+                    detailsHtml = `
+                        <div class="result-title">Итог: ${item.result_data.rolls} рулонов</div>
+                        <div>Периметр: ${item.result_data.details.perimeter} м</div>
+                        <div>Площадь стен: ${item.result_data.details.sWalls} м²</div>
+                    `;
+                } else if (item.calc_type === 'floor') {
+                    detailsHtml = `
+                        <div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div>
+                        <div>Площадь поверхности: ${item.result_data.details.area} м²</div>
+                    `;
+                }
+
+                const typeName = item.calc_type === 'paint' ? '🎨 Краска' : 
+                                 item.calc_type === 'tile' ? '🧱 Плитка' : 
+                                 item.calc_type === 'wallpaper' ? '📜 Обои' : '🪵 Пол';
+
+                return `
+                    <div class="history-item">
+                        <div class="history-date">Дата: ${new Date(item.created_at).toLocaleString()}</div>
+                        <div class="history-type">${typeName}</div>
+                        ${detailsHtml}
+                    </div>
+                `;
+            }).join('');
+
+            // Устанавливаем дату для печатной версии
+            document.getElementById('print-date').textContent = new Date().toLocaleString();
+
+        } catch (error) {
+            list.innerHTML = 'Ошибка загрузки истории.';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+</body>
+</html>
