@@ -5,12 +5,43 @@
     <title>Metrage | Мои расчеты</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Стили, которые применяются ТОЛЬКО при печати (экспорте в PDF) */
+        /* Стили для скроллируемого контейнера истории */
+        .history-scroll-container {
+            max-height: 60vh; /* Блок занимает не более 60% высоты экрана */
+            overflow-y: auto; /* Включаем вертикальную прокрутку, если контента больше */
+            padding-right: 10px; /* Отступ для красивого скроллбара */
+            margin-top: 20px;
+        }
+
+        /* Красивое оформление ползунка (скроллбара) для WebKit */
+        .history-scroll-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .history-scroll-container::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+            border-radius: 4px;
+        }
+        .history-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .history-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Стили, которые применяются ТОЛЬКО при экспорте в PDF */
         @media print {
             body { background: white; padding: 0; }
             header, .back-btn, .no-print, #btn-logout, #btn-history, .logo { display: none !important; }
             .container { max-width: 100%; margin: 0; }
             .calc-panel { box-shadow: none; border: none; padding: 0; }
+            
+            /* Отключаем ползунок при печати, чтобы выгрузились все расчеты */
+            .history-scroll-container {
+                max-height: none;
+                overflow: visible;
+            }
+            
             .history-item { page-break-inside: avoid; border: 1px solid #ccc; margin-bottom: 20px; }
             .print-header { display: block !important; text-align: center; margin-bottom: 30px; }
             .print-header h1 { font-size: 24px; color: #000; }
@@ -44,14 +75,17 @@
         </div>
         
         <h2 class="no-print" style="margin-top: 15px;">Мои сохраненные расчеты</h2>
-        <div id="history-list" style="margin-top: 20px;">Загрузка...</div>
+        
+        <!-- Контейнер с ползунком -->
+        <div class="history-scroll-container" id="history-container">
+            <div id="history-list">Загрузка...</div>
+        </div>
     </div>
 </div>
 
 <script src="js/api.js"></script>
 <script src="js/auth.js"></script>
 <script>
-    // Функция экспорта (вызывает системное окно печати)
     function exportToPDF() {
         window.print();
     }
@@ -73,13 +107,11 @@
                 return;
             }
 
-            // Показываем кнопку экспорта, если есть расчеты
             exportBtn.style.display = 'block';
 
             list.innerHTML = data.map(item => {
                 let detailsHtml = '';
                 
-                // Красивое форматирование в зависимости от типа
                 if (item.calc_type === 'paint') {
                     detailsHtml = `
                         <div class="result-title">Итог: ${item.result_data.cans} банок(и)</div>
@@ -118,7 +150,6 @@
                 `;
             }).join('');
 
-            // Устанавливаем дату для печатной версии
             document.getElementById('print-date').textContent = new Date().toLocaleString();
 
         } catch (error) {
