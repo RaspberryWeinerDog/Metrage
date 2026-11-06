@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Metrage | Калькулятор</title>
+    <title>Metrage | Калькулятор краски</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -37,6 +37,19 @@
         </form>
 
         <div id="res-paint" class="result-box"></div>
+        
+        <!-- БЛОК ДЛЯ СОХРАНЕНИЯ С КОММЕНТАРИЯМИ -->
+        <div id="save-details-paint" class="hidden" style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);">
+            <div class="input-group" style="margin-bottom: 10px;">
+                <label>Название расчета (необязательно)</label>
+                <input type="text" id="p-custom-title" placeholder="Например: Краска для спальни">
+            </div>
+            <div class="input-group">
+                <label>Описание (необязательно)</label>
+                <textarea id="p-description" rows="2" placeholder="Например: Краска Tikkurila, цвет белый" style="padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+        </div>
+
         <button id="save-paint" class="btn-calc btn-save hidden">Сохранить в личный кабинет</button>
         
         <div id="mp-paint" class="marketplace-section">
@@ -53,7 +66,6 @@
 <script src="js/auth.js"></script>
 <script src="js/calculators.js"></script>
 <script>
-    // Меняем заголовок, если пришли с главной страницы
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('title')) document.getElementById('page-title').textContent = urlParams.get('title');
 </script>

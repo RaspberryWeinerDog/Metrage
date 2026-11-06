@@ -20,13 +20,6 @@ const db = new sqlite3.Database('./database.db', (err) => {
 // Создаем таблицы, если их нет
 db.serialize(() => {
     // Таблица пользователей
-    db.run(`CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT
-    )`);
-    
-    // Таблица истории расчетов
     db.run(`CREATE TABLE IF NOT EXISTS history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
@@ -35,6 +28,19 @@ db.serialize(() => {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )`);
+
+    // Безопасное добавление новых колонок (если их еще нет)
+    db.all("PRAGMA table_info(history)", (err, columns) => {
+        if (err) return console.error(err.message);
+        const columnNames = columns.map(c => c.name);
+        
+        if (!columnNames.includes('custom_title')) {
+            db.run(`ALTER TABLE history ADD COLUMN custom_title TEXT`);
+        }
+        if (!columnNames.includes('description')) {
+            db.run(`ALTER TABLE history ADD COLUMN description TEXT`);
+        }
+    });
 });
 
 // --- MIDDLEWARE ДЛЯ ПРОВЕРКИ ТОКЕНА ---
@@ -96,9 +102,12 @@ app.get('/api/history', authenticateToken, (req, res) => {
 
 // Сохранить расчет в историю
 app.post('/api/history', authenticateToken, (req, res) => {
-    const { calc_type, result_data } = req.body;
-    db.run(`INSERT INTO history (user_id, calc_type, result_data) VALUES (?, ?, ?)`, 
-        [req.user.id, calc_type, JSON.stringify(result_data)], 
+    // Добавили custom_title и description в req.body
+    const { calc_type, result_data, custom_title, description } = req.body; 
+    
+    // Обновили SQL запрос
+    db.run(`INSERT INTO history (user_id, calc_type, result_data, custom_title, description) VALUES (?, ?, ?, ?, ?)`, 
+        [req.user.id, calc_type, JSON.stringify(result_data), custom_title || null, description || null], 
         function(err) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ success: true, id: this.lastID });
