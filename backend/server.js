@@ -170,6 +170,25 @@ app.put('/api/history/:id', authenticateToken, (req, res) => {
     );
 });
 
+// --- МАССОВОЕ УДАЛЕНИЕ ЗАПИСЕЙ ИСТОРИИ ---
+app.post('/api/history/delete', authenticateToken, (req, res) => {
+    const { ids } = req.body;
+    
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ error: 'Не переданы ID для удаления' });
+    }
+
+    // Формируем строку вида ?, ?, ? для SQL-запроса
+    const placeholders = ids.map(() => '?').join(',');
+    // Добавляем ID пользователя в конец массива параметров для безопасности
+    const params = [...ids, req.user.id];
+
+    db.run(`DELETE FROM history WHERE id IN (${placeholders}) AND user_id = ?`, params, function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true, deletedCount: this.changes });
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
