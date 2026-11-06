@@ -32,6 +32,19 @@
         </form>
 
         <div id="res-wallpaper" class="result-box"></div>
+        
+        <!-- БЛОК ДЛЯ СОХРАНЕНИЯ С КОММЕНТАРИЯМИ -->
+        <div id="save-details-wallpaper" class="hidden" style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);">
+            <div class="input-group" style="margin-bottom: 10px;">
+                <label>Название расчета (необязательно)</label>
+                <input type="text" id="w-custom-title" placeholder="Например: Обои в гостиную">
+            </div>
+            <div class="input-group">
+                <label>Описание (необязательно)</label>
+                <textarea id="w-description" rows="2" placeholder="Например: Флизелиновые, с рисунком" style="padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+        </div>
+
         <button id="save-wallpaper" class="btn-calc btn-save hidden">Сохранить в личный кабинет</button>
         
         <div id="mp-wallpaper" class="marketplace-section">
@@ -48,7 +61,6 @@
 <script src="js/auth.js"></script>
 <script src="js/calculators.js"></script>
 <script>
-    // Меняем заголовок, если пришли с главной страницы
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('title')) document.getElementById('page-title').textContent = urlParams.get('title');
 </script>

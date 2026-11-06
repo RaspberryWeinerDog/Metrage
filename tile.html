@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Metrage | Калькулятор</title>
+    <title>Metrage | Калькулятор плитки</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -31,6 +31,19 @@
         </form>
 
         <div id="res-tile" class="result-box"></div>
+        
+        <!-- БЛОК ДЛЯ СОХРАНЕНИЯ С КОММЕНТАРИЯМИ -->
+        <div id="save-details-tile" class="hidden" style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);">
+            <div class="input-group" style="margin-bottom: 10px;">
+                <label>Название расчета (необязательно)</label>
+                <input type="text" id="t-custom-title" placeholder="Например: Плитка в ванную">
+            </div>
+            <div class="input-group">
+                <label>Описание (необязательно)</label>
+                <textarea id="t-description" rows="2" placeholder="Например: Керамогранит 60х60, светлый" style="padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+        </div>
+
         <button id="save-tile" class="btn-calc btn-save hidden">Сохранить в личный кабинет</button>
         
         <div id="mp-tile" class="marketplace-section">

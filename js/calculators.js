@@ -12,9 +12,21 @@ function setMarketplaceLinks(type, query) {
 async function saveCalculation(type, resultData) {
     if (!localStorage.getItem('token')) return alert('Войдите в аккаунт, чтобы сохранить расчет!');
     
+    // Получаем введенные данные из полей
+    const prefix = type === 'paint' ? 'p-' : type === 'tile' ? 't-' : type === 'wallpaper' ? 'w-' : 'f-';
+    const titleInput = document.getElementById(`${prefix}custom-title`);
+    const descInput = document.getElementById(`${prefix}description`);
+
+    const payload = { 
+        calc_type: type, 
+        result_data: resultData,
+        custom_title: titleInput ? titleInput.value : null,
+        description: descInput ? descInput.value : null
+    };
+    
     const data = await fetchAPI('/history', {
         method: 'POST',
-        body: JSON.stringify({ calc_type: type, result_data: resultData })
+        body: JSON.stringify(payload)
     });
     
     if (data.success) alert('Расчет успешно сохранен в личный кабинет!');
@@ -43,6 +55,7 @@ if (document.getElementById('form-paint')) {
             document.getElementById('res-paint').style.display = 'block';
             document.getElementById('mp-paint').style.display = 'block';
             document.getElementById('save-paint').classList.remove('hidden');
+            document.getElementById('save-details-paint').classList.remove('hidden'); // Показываем блок
             setMarketplaceLinks('paint', 'краска для стен');
             
             document.getElementById('save-paint').onclick = () => saveCalculation('paint', result);
@@ -70,6 +83,7 @@ if (document.getElementById('form-tile')) {
             document.getElementById('res-tile').style.display = 'block';
             document.getElementById('mp-tile').style.display = 'block';
             document.getElementById('save-tile').classList.remove('hidden');
+            document.getElementById('save-details-tile').classList.remove('hidden'); // Показываем блок
             setMarketplaceLinks('tile', 'керамическая плитка');
             
             document.getElementById('save-tile').onclick = () => saveCalculation('tile', result);
@@ -97,6 +111,7 @@ if (document.getElementById('form-wallpaper')) {
             document.getElementById('res-wallpaper').style.display = 'block';
             document.getElementById('mp-wallpaper').style.display = 'block';
             document.getElementById('save-wallpaper').classList.remove('hidden');
+            document.getElementById('save-details-wallpaper').classList.remove('hidden'); // Показываем блок
             setMarketplaceLinks('wallpaper', 'обои');
             
             document.getElementById('save-wallpaper').onclick = () => saveCalculation('wallpaper', result);
@@ -122,6 +137,7 @@ if (document.getElementById('form-floor')) {
             document.getElementById('res-floor').style.display = 'block';
             document.getElementById('mp-floor').style.display = 'block';
             document.getElementById('save-floor').classList.remove('hidden');
+            document.getElementById('save-details-floor').classList.remove('hidden'); // Показываем блок
             setMarketplaceLinks('floor', 'напольное покрытие');
             
             document.getElementById('save-floor').onclick = () => saveCalculation('floor', result);
