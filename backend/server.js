@@ -154,6 +154,22 @@ app.post('/api/calculate/floor', (req, res) => {
     res.json({ success: true, packs, details: { area: area.toFixed(2), totalArea: totalArea.toFixed(2) } });
 });
 
+// --- ОБНОВЛЕНИЕ ЗАПИСИ ИСТОРИИ ---
+app.put('/api/history/:id', authenticateToken, (req, res) => {
+    const { custom_title, description } = req.body;
+    const historyId = req.params.id;
+
+    // Проверяем, что запись принадлежит этому пользователю
+    db.run(`UPDATE history SET custom_title = ?, description = ? WHERE id = ? AND user_id = ?`, 
+        [custom_title || null, description || null, historyId, req.user.id], 
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0) return res.status(404).json({ error: 'Запись не найдена или нет прав' });
+            res.json({ success: true });
+        }
+    );
+});
+
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
