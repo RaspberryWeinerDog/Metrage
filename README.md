@@ -78,7 +78,7 @@ node server.js
 
 
 
- # Metrage | Smart calculator for renovation
+ # Metrage | Метраж
 
 **Metrage** is a web service developed as a university project.
 
