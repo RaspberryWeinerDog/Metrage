@@ -62,25 +62,9 @@
 
         .history-content { flex-grow: 1; }
         
-        /* Верхняя панель карточки */
-        .history-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-start; 
-        }
-        
-        /* Блок с датой и кнопкой справа */
-        .history-meta {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-shrink: 0;
-        }
-
-        .history-date {
-            font-size: 0.85rem;
-            color: #64748b;
-        }
+        .history-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .history-meta { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+        .history-date { font-size: 0.85rem; color: #64748b; }
 
         .history-details {
             display: none;
@@ -94,143 +78,150 @@
         .history-item.active { border-color: var(--primary); background-color: #f8fafc; }
         .history-desc { margin-bottom: 10px; font-style: italic; color: #475569; }
 
-        /* --- КНОПКА ИЗМЕНИТЬ --- */
+        /* Кнопка изменить */
         .btn-edit-expandable {
-            background: #e0f2fe;
-            color: #0284c7;
-            border: none;
-            border-radius: 20px;
-            height: 36px;
-            width: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            padding: 0 10px;
-            position: relative;
+            background: #e0f2fe; color: #0284c7; border: none; border-radius: 20px;
+            height: 36px; width: 36px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease; overflow: hidden; padding: 0 10px;
         }
-
         .btn-edit-expandable .icon { font-size: 1.1rem; flex-shrink: 0; }
-
         .btn-edit-expandable .text {
-            max-width: 0;
-            opacity: 0;
-            white-space: nowrap;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-left: 0;
-            transition: all 0.3s ease;
-            overflow: hidden;
+            max-width: 0; opacity: 0; white-space: nowrap; font-size: 0.85rem;
+            font-weight: bold; margin-left: 0; transition: all 0.3s ease; overflow: hidden;
         }
-
-        .btn-edit-expandable:hover {
-            width: 115px;
-            background: #bae6fd;
-            transition-delay: 1s;
-        }
-
-        .btn-edit-expandable:hover .text {
-            max-width: 100px;
-            opacity: 1;
-            margin-left: 8px;
-            transition-delay: 1s;
-        }
+        .btn-edit-expandable:hover { width: 115px; background: #bae6fd; transition-delay: 1s; }
+        .btn-edit-expandable:hover .text { max-width: 100px; opacity: 1; margin-left: 8px; transition-delay: 1s; }
 
         /* Панель массовых действий */
         .bulk-actions {
-            display: none;
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            flex-direction: column;
-            gap: 10px;
+            display: none; background: #eff6ff; border: 1px solid #bfdbfe;
+            padding: 15px; border-radius: 8px; margin-bottom: 15px; flex-direction: column; gap: 10px;
         }
         .bulk-actions.active { display: flex; }
-        
-        .bulk-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .export-settings {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            font-size: 0.9rem;
-            background: #fff;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-        }
+        .bulk-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .export-settings { display: flex; gap: 15px; align-items: center; font-size: 0.9rem; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); }
         .export-settings label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-
-        .btn-export-selected {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .btn-delete-selected {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .btn-export-selected { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-delete-selected { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         
-        .select-all-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            cursor: pointer;
+        .select-all-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: bold; cursor: pointer; }
+        .edit-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; }
+        .btn-save-edit { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        /* =========================================
+           СТИЛИ ДЛЯ ПЕЧАТИ (ОФИЦИАЛЬНЫЙ ДОКУМЕНТ)
+           ========================================= */
+        .print-only {
+            display: none;
         }
 
-        .edit-input {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-family: inherit;
-        }
-        .btn-save-edit {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Печать */
         @media print {
-            body { background: white; padding: 0; }
-            header, .back-btn, .no-print, #btn-logout, #btn-history, .logo, .bulk-actions, .custom-checkbox, .select-all-container { display: none !important; }
-            .container { max-width: 100%; margin: 0; }
-            .calc-panel { box-shadow: none; border: none; padding: 0; }
-            .history-scroll-container { max-height: none; overflow: visible; padding: 0; }
+            /* Скрываем все элементы интерфейса */
+            body { 
+                background: white; 
+                padding: 0; 
+                margin: 0;
+                font-family: 'Times New Roman', Times, serif !important; 
+                font-size: 14px !important; 
+                color: black !important;
+            }
+            
+            header, .back-btn, .no-print, #btn-logout, #btn-history, .logo, 
+            .bulk-actions, .custom-checkbox, .select-all-container, 
+            .btn-edit-expandable, h2, .history-scroll-container::-webkit-scrollbar { 
+                display: none !important; 
+            }
+
+            /* Убираем лишние обертки для печати */
+            .container, .calc-panel { 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0; 
+                box-shadow: none; 
+                border: none; 
+                background: transparent;
+            }
+            
+            .history-scroll-container { 
+                max-height: none; 
+                overflow: visible; 
+                padding: 0; 
+                margin: 0;
+            }
+
+            /* Оформление карточек как пунктов документа */
+            .history-item { 
+                page-break-inside: avoid; 
+                border: none;
+                border-bottom: 1px solid #000;
+                border-radius: 0;
+                margin-bottom: 15px; 
+                padding: 10px 0;
+                display: block; 
+                background: transparent !important;
+            }
+            
             .history-item.print-hidden { display: none !important; }
             .hide-custom-desc .history-desc { display: none !important; }
-            .history-item { page-break-inside: avoid; border: 1px solid #ccc; margin-bottom: 20px; display: block; }
-            .print-header { display: block !important; text-align: center; margin-bottom: 30px; }
-            .print-header h1 { font-size: 24px; color: #000; }
+
+            /* Принудительно раскрываем карточки для печати, чтобы был виден весь текст */
+            .history-details { 
+                display: block !important; 
+                border-top: none; 
+                margin-top: 5px; 
+                padding-top: 5px; 
+            }
+
+            /* Форматирование текста */
+            .history-header { 
+                display: block; 
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+            .history-meta { display: none; /* Даты скрываем */ }
+            
+            .custom-title-text, .default-type-text, .history-desc, .result-title, .history-details div {
+                font-family: 'Times New Roman', Times, serif !important;
+                font-size: 14px !important;
+                line-height: 1.4 !important;
+            }
+
+            .history-desc {
+                font-style: italic;
+                margin-bottom: 5px;
+            }
+
+            /* Показываем шапку документа */
+            .print-only {
+                display: block !important;
+                margin-bottom: 30px;
+            }
+            .print-only h1 {
+                text-align: center;
+                font-size: 18px !important;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .print-only p {
+                text-align: justify;
+                margin-bottom: 15px;
+                text-indent: 25px; /* Красная строка */
+            }
+            .doc-signatures {
+                margin-top: 50px;
+                display: flex;
+                justify-content: space-between;
+            }
+            .doc-signatures div {
+                width: 45%;
+            }
+            .doc-signatures .line {
+                border-bottom: 1px solid #000;
+                height: 20px;
+                margin-bottom: 5px;
+            }
         }
-        .print-header { display: none; }
     </style>
 </head>
 <body>
@@ -246,9 +237,12 @@
     </header>
 
     <div class="calc-panel">
-        <div class="print-header">
-            <h1>Сводная ведомость расчетов — Metrage</h1>
-            <p>Сформировано: <span id="print-date"></span></p>
+        
+        <!-- ОФИЦИАЛЬНАЯ ШАПКА ДЛЯ ПЕЧАТИ (ВИДНА ТОЛЬКО ПРИ ЭКСПОРТЕ) -->
+        <div class="print-only">
+            <h1>Сводное заключение по расчету материалов</h1>
+            <p>Настоящий документ содержит предварительный расчет необходимого количества строительных и отделочных материалов, сформированный на основе введенных пользователем параметров помещений и характеристик материалов.</p>
+            <p>Расчеты произведены в соответствии с общепринятыми методиками. Документ предназначен для предварительного планирования закупок и может быть передан специалистам (прорабам, дизайнерам, консультантам строительных магазинов) для проверки или согласования сметы.</p>
         </div>
 
         <div class="no-print" style="display: flex; justify-content: space-between; align-items: center;">
@@ -281,6 +275,21 @@
         <div class="history-scroll-container" id="history-container">
             <div id="history-list">Загрузка...</div>
         </div>
+
+        <!-- ПОДПИСИ ДЛЯ ДОКУМЕНТА -->
+        <div class="print-only doc-signatures">
+            <div>
+                <p>Исполнитель:</p>
+                <div class="line"></div>
+                <p style="font-size: 12px; text-align: center;">(подпись)</p>
+            </div>
+            <div>
+                <p>Заказчик:</p>
+                <div class="line"></div>
+                <p style="font-size: 12px; text-align: center;">(подпись)</p>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -365,15 +374,12 @@
         } catch (e) { alert('Ошибка сети'); }
     }
 
-    // --- РЕДАКТИРОВАНИЕ (ИСПРАВЛЕНА ЛОГИКА ОТКРЫТИЯ) ---
+    // --- РЕДАКТИРОВАНИЕ ---
     function enableEdit(id, currentTitle, currentDesc) {
         const item = document.getElementById(`item-${id}`);
-        
-        // ПРИНУДИТЕЛЬНО ОТКРЫВАЕМ КАРТОЧКУ (добавляем класс active)
-        item.classList.add('active');
-
+        item.classList.add('active'); // Принудительно открываем
         const detailsDiv = item.querySelector('.history-details');
-        detailsDiv.onclick = (e) => e.stopPropagation(); // Запрещаем клику внутри формы сворачивать карточку
+        detailsDiv.onclick = (e) => e.stopPropagation();
 
         detailsDiv.innerHTML = `
             <div style="margin-bottom: 10px;">
@@ -429,7 +435,7 @@
                 else if (item.calc_type === 'floor') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div>`;
 
                 const defaultTypeName = item.calc_type === 'paint' ? '🎨 Краска' : item.calc_type === 'tile' ? '🧱 Плитка' : item.calc_type === 'wallpaper' ? '📜 Обои' : '🪵 Пол';
-                const descriptionHtml = item.description ? `<div class="history-desc">"${item.description}"</div>` : '';
+                const descriptionHtml = item.description ? `<div class="history-desc">${item.description}</div>` : '';
                 
                 const safeTitle = (item.custom_title || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
                 const safeDesc = (item.description || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
@@ -441,7 +447,7 @@
                         <div class="history-content">
                             <div class="history-header">
                                 <div class="history-type">
-                                    <span class="custom-title-text">${item.custom_title ? '📌 ' + item.custom_title : ''}</span>
+                                    <span class="custom-title-text">${item.custom_title ? item.custom_title : ''}</span>
                                     <span class="default-type-text" style="${item.custom_title ? 'font-size: 0.8em; color: #64748b; display: block;' : ''}">${defaultTypeName}</span>
                                 </div>
                                 
@@ -464,7 +470,6 @@
                 `;
             }).join('');
 
-            document.getElementById('print-date').textContent = new Date().toLocaleString();
             updateBulkActions();
 
         } catch (error) {
