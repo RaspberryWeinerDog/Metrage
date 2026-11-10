@@ -61,8 +61,27 @@
         }
 
         .history-content { flex-grow: 1; }
-        .history-header { display: flex; justify-content: space-between; align-items: center; }
         
+        /* Верхняя панель карточки */
+        .history-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-start; /* Выравниваем по верхнему краю */
+        }
+        
+        /* Блок с датой и кнопкой справа */
+        .history-meta {
+            display: flex;
+            align-items: center; /* Дата и кнопка на одной линии */
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .history-date {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
         .history-details {
             display: none;
             margin-top: 15px;
@@ -75,26 +94,54 @@
         .history-item.active { border-color: var(--primary); background-color: #f8fafc; }
         .history-desc { margin-bottom: 10px; font-style: italic; color: #475569; }
 
-        /* Кнопки */
-        .btn-edit {
-            background: #f59e0b;
-            color: white;
+        /* --- НОВАЯ КНОПКА ИЗМЕНИТЬ --- */
+        .btn-edit-expandable {
+            background: #e0f2fe; /* Светло-голубой фон */
+            color: #0284c7; /* Синий цвет иконки */
             border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
+            border-radius: 20px; /* Круглая форма */
+            height: 36px;
+            width: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-size: 0.85rem;
-            margin-left: 10px;
+            transition: all 0.3s ease; /* Плавная анимация */
+            overflow: hidden;
+            padding: 0 10px; /* Начальный отступ */
+            position: relative;
         }
-        .btn-save-edit {
-            background: var(--success);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
+
+        /* Иконка карандаша */
+        .btn-edit-expandable .icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* Текст "Изменить", изначально скрыт */
+        .btn-edit-expandable .text {
+            max-width: 0;
+            opacity: 0;
+            white-space: nowrap;
+            font-size: 0.85rem;
             font-weight: bold;
+            margin-left: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        /* Анимация при наведении (расширение через 1 секунду) */
+        .btn-edit-expandable:hover {
+            width: 115px; /* Расширяем кнопку */
+            background: #bae6fd; /* Чуть темнее при наведении */
+            transition-delay: 1s; /* Задержка перед началом анимации */
+        }
+
+        .btn-edit-expandable:hover .text {
+            max-width: 100px;
+            opacity: 1;
+            margin-left: 8px; /* Отступ между иконкой и текстом */
+            transition-delay: 1s;
         }
 
         /* Панель массовых действий */
@@ -139,8 +186,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .btn-export-selected:hover { background: var(--primary-hover); }
-
         .btn-delete-selected {
             background: #ef4444;
             color: white;
@@ -150,9 +195,7 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .btn-delete-selected:hover { background: #dc2626; }
         
-        /* Чекбокс "Выбрать все" */
         .select-all-container {
             display: flex;
             align-items: center;
@@ -170,6 +213,15 @@
             border-radius: 4px;
             font-family: inherit;
         }
+        .btn-save-edit {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
 
         /* Печать */
         @media print {
@@ -178,12 +230,7 @@
             .container { max-width: 100%; margin: 0; }
             .calc-panel { box-shadow: none; border: none; padding: 0; }
             .history-scroll-container { max-height: none; overflow: visible; padding: 0; }
-            
-            /* Скрываем элементы, которые не выбраны для печати */
             .history-item.print-hidden { display: none !important; }
-            
-            /* Настройки скрытия пользовательских данных */
-            .hide-custom-title .history-type { /* Оставляем только дефолтный тип */ }
             .hide-custom-desc .history-desc { display: none !important; }
 
             .history-item { page-break-inside: avoid; border: 1px solid #ccc; margin-bottom: 20px; display: block; }
@@ -213,7 +260,6 @@
 
         <div class="no-print" style="display: flex; justify-content: space-between; align-items: center;">
             <a href="index.html" class="back-btn">← На главную</a>
-            <!-- Кнопка экспорта всего (если ничего не выбрано) -->
             <button id="btn-export-all" class="btn-auth" onclick="exportAllToPDF()" style="display: none;">📥 Экспорт всех в PDF</button>
         </div>
         
@@ -260,18 +306,11 @@
         const allBoxes = document.querySelectorAll('.history-checkbox');
 
         countSpan.textContent = count;
+        if (count > 0) panel.classList.add('active');
+        else panel.classList.remove('active');
 
-        if (count > 0) {
-            panel.classList.add('active');
-        } else {
-            panel.classList.remove('active');
-        }
-
-        if (count === allBoxes.length && allBoxes.length > 0) {
-            selectAllBox.checked = true;
-        } else {
-            selectAllBox.checked = false;
-        }
+        if (count === allBoxes.length && allBoxes.length > 0) selectAllBox.checked = true;
+        else selectAllBox.checked = false;
     }
 
     function toggleSelectAll() {
@@ -282,8 +321,6 @@
     }
 
     // --- ЭКСПОРТ В PDF ---
-
-    // Экспорт ВСЕХ расчетов (если ничего не выделено)
     function exportAllToPDF() {
         document.querySelectorAll('.history-item').forEach(item => {
             item.classList.remove('print-hidden', 'hide-custom-title', 'hide-custom-desc');
@@ -291,42 +328,31 @@
         window.print();
     }
 
-    // Экспорт ТОЛЬКО ВЫБРАННЫХ с учетом настроек
     function exportSelectedToPDF() {
         const checkboxes = document.querySelectorAll('.history-checkbox:checked');
         if (checkboxes.length === 0) return alert('Выберите хотя бы один расчет!');
 
         const includeTitle = document.getElementById('opt-custom-title').checked;
         const includeDesc = document.getElementById('opt-custom-desc').checked;
-
         const selectedIds = Array.from(checkboxes).map(box => box.value);
         
-        // Проходимся по всем карточкам
         document.querySelectorAll('.history-item').forEach(item => {
             const checkbox = item.querySelector('.history-checkbox');
             const itemId = checkbox.value;
 
             if (selectedIds.includes(itemId)) {
-                // Если выбран — показываем
                 item.classList.remove('print-hidden');
-                
-                // Управляем названием и описанием
                 if (!includeTitle) item.classList.add('hide-custom-title');
                 else item.classList.remove('hide-custom-title');
-
                 if (!includeDesc) item.classList.add('hide-custom-desc');
                 else item.classList.remove('hide-custom-desc');
-
             } else {
-                // Если не выбран — скрываем
                 item.classList.add('print-hidden');
             }
         });
 
-        // Запускаем печать
         window.print();
 
-        // Возвращаем всё обратно после закрытия окна печати
         setTimeout(() => {
             document.querySelectorAll('.history-item').forEach(item => {
                 item.classList.remove('print-hidden', 'hide-custom-title', 'hide-custom-desc');
@@ -338,24 +364,14 @@
     async function deleteSelected() {
         const checkboxes = document.querySelectorAll('.history-checkbox:checked');
         const ids = Array.from(checkboxes).map(box => parseInt(box.value));
-
         if (ids.length === 0) return;
         if (!confirm(`Вы уверены, что хотите удалить ${ids.length} расчет(ов)?`)) return;
 
         try {
-            const data = await fetchAPI('/history/delete', {
-                method: 'POST',
-                body: JSON.stringify({ ids })
-            });
-
-            if (data.success) {
-                loadHistory();
-            } else {
-                alert('Ошибка при удалении');
-            }
-        } catch (e) {
-            alert('Ошибка сети');
-        }
+            const data = await fetchAPI('/history/delete', { method: 'POST', body: JSON.stringify({ ids }) });
+            if (data.success) loadHistory();
+            else alert('Ошибка при удалении');
+        } catch (e) { alert('Ошибка сети'); }
     }
 
     // --- РЕДАКТИРОВАНИЕ ---
@@ -381,17 +397,9 @@
         event.stopPropagation();
         const newTitle = document.getElementById(`edit-title-${id}`).value;
         const newDesc = document.getElementById(`edit-desc-${id}`).value;
-
-        const data = await fetchAPI(`/history/${id}`, {
-            method: 'PUT',
-            body: JSON.stringify({ custom_title: newTitle, description: newDesc })
-        });
-
-        if (data.success) {
-            loadHistory();
-        } else {
-            alert('Ошибка при сохранении изменений');
-        }
+        const data = await fetchAPI(`/history/${id}`, { method: 'PUT', body: JSON.stringify({ custom_title: newTitle, description: newDesc }) });
+        if (data.success) loadHistory();
+        else alert('Ошибка при сохранении изменений');
     }
 
     // --- ЗАГРУЗКА СПИСКА ---
@@ -407,7 +415,6 @@
 
         try {
             const data = await fetchAPI('/history');
-
             if (data.length === 0) {
                 list.innerHTML = '<p>У вас пока нет сохраненных расчетов.</p>';
                 exportAllBtn.style.display = 'none';
@@ -421,58 +428,37 @@
 
             list.innerHTML = data.map(item => {
                 let detailsHtml = '';
-                
-                if (item.calc_type === 'paint') {
-                    detailsHtml = `
-                        <div class="result-title">Итог: ${item.result_data.cans} банок(и)</div>
-                        <div>Площадь стен: ${item.result_data.details.sWalls} м²</div>
-                        <div>Полезная площадь: ${item.result_data.details.sUseful} м²</div>
-                    `;
-                } else if (item.calc_type === 'tile') {
-                    detailsHtml = `
-                        <div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div>
-                        <div>Площадь поверхности: ${item.result_data.details.area} м²</div>
-                        <div>Требуется плиток: ${item.result_data.details.totalTiles} шт.</div>
-                    `;
-                } else if (item.calc_type === 'wallpaper') {
-                    detailsHtml = `
-                        <div class="result-title">Итог: ${item.result_data.rolls} рулонов</div>
-                        <div>Периметр: ${item.result_data.details.perimeter} м</div>
-                        <div>Площадь стен: ${item.result_data.details.sWalls} м²</div>
-                    `;
-                } else if (item.calc_type === 'floor') {
-                    detailsHtml = `
-                        <div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div>
-                        <div>Площадь поверхности: ${item.result_data.details.area} м²</div>
-                    `;
-                }
+                if (item.calc_type === 'paint') detailsHtml = `<div class="result-title">Итог: ${item.result_data.cans} банок(и)</div><div>Площадь стен: ${item.result_data.details.sWalls} м²</div><div>Полезная площадь: ${item.result_data.details.sUseful} м²</div>`;
+                else if (item.calc_type === 'tile') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div><div>Требуется плиток: ${item.result_data.details.totalTiles} шт.</div>`;
+                else if (item.calc_type === 'wallpaper') detailsHtml = `<div class="result-title">Итог: ${item.result_data.rolls} рулонов</div><div>Периметр: ${item.result_data.details.perimeter} м</div><div>Площадь стен: ${item.result_data.details.sWalls} м²</div>`;
+                else if (item.calc_type === 'floor') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div>`;
 
-                const defaultTypeName = item.calc_type === 'paint' ? '🎨 Краска' : 
-                                 item.calc_type === 'tile' ? '🧱 Плитка' : 
-                                 item.calc_type === 'wallpaper' ? '📜 Обои' : '🪵 Пол';
-                
-                // Если кастомного названия нет, используем дефолтное
-                const displayTitle = item.custom_title ? `📌 ${item.custom_title}` : defaultTypeName;
+                const defaultTypeName = item.calc_type === 'paint' ? '🎨 Краска' : item.calc_type === 'tile' ? '🧱 Плитка' : item.calc_type === 'wallpaper' ? '📜 Обои' : '🪵 Пол';
                 const descriptionHtml = item.description ? `<div class="history-desc">"${item.description}"</div>` : '';
-
+                
                 const safeTitle = (item.custom_title || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
                 const safeDesc = (item.description || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
 
                 return `
                     <div class="history-item" id="item-${item.id}" onclick="this.classList.toggle('active')">
-                        
                         <input type="checkbox" class="custom-checkbox history-checkbox no-print" value="${item.id}" onclick="event.stopPropagation(); updateBulkActions();">
                         
                         <div class="history-content">
                             <div class="history-header">
-                                <!-- Обернули название в span с классом для скрытия при печати -->
                                 <div class="history-type">
                                     <span class="custom-title-text">${item.custom_title ? '📌 ' + item.custom_title : ''}</span>
                                     <span class="default-type-text" style="${item.custom_title ? 'font-size: 0.8em; color: #64748b; display: block;' : ''}">${defaultTypeName}</span>
                                 </div>
-                                <div style="display: flex; align-items: center;">
+                                
+                                <!-- Дата и кнопка на одной линии -->
+                                <div class="history-meta">
                                     <div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>
-                                    <button class="btn-edit no-print" onclick="event.stopPropagation(); enableEdit(${item.id}, '${safeTitle}', '${safeDesc}')">✏️ Изменить</button>
+                                    
+                                    <!-- Новая круглая кнопка с анимацией -->
+                                    <button class="btn-edit-expandable no-print" onclick="event.stopPropagation(); enableEdit(${item.id}, '${safeTitle}', '${safeDesc}')" title="Изменить">
+                                        <span class="icon">✏️</span>
+                                        <span class="text">Изменить</span>
+                                    </button>
                                 </div>
                             </div>
                             
