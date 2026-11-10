@@ -66,13 +66,13 @@
         .history-header { 
             display: flex; 
             justify-content: space-between; 
-            align-items: flex-start; /* Выравниваем по верхнему краю */
+            align-items: flex-start; 
         }
         
         /* Блок с датой и кнопкой справа */
         .history-meta {
             display: flex;
-            align-items: center; /* Дата и кнопка на одной линии */
+            align-items: center;
             gap: 15px;
             flex-shrink: 0;
         }
@@ -94,31 +94,26 @@
         .history-item.active { border-color: var(--primary); background-color: #f8fafc; }
         .history-desc { margin-bottom: 10px; font-style: italic; color: #475569; }
 
-        /* --- НОВАЯ КНОПКА ИЗМЕНИТЬ --- */
+        /* --- КНОПКА ИЗМЕНИТЬ --- */
         .btn-edit-expandable {
-            background: #e0f2fe; /* Светло-голубой фон */
-            color: #0284c7; /* Синий цвет иконки */
+            background: #e0f2fe;
+            color: #0284c7;
             border: none;
-            border-radius: 20px; /* Круглая форма */
+            border-radius: 20px;
             height: 36px;
             width: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease; /* Плавная анимация */
+            transition: all 0.3s ease;
             overflow: hidden;
-            padding: 0 10px; /* Начальный отступ */
+            padding: 0 10px;
             position: relative;
         }
 
-        /* Иконка карандаша */
-        .btn-edit-expandable .icon {
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
+        .btn-edit-expandable .icon { font-size: 1.1rem; flex-shrink: 0; }
 
-        /* Текст "Изменить", изначально скрыт */
         .btn-edit-expandable .text {
             max-width: 0;
             opacity: 0;
@@ -130,17 +125,16 @@
             overflow: hidden;
         }
 
-        /* Анимация при наведении (расширение через 1 секунду) */
         .btn-edit-expandable:hover {
-            width: 115px; /* Расширяем кнопку */
-            background: #bae6fd; /* Чуть темнее при наведении */
-            transition-delay: 1s; /* Задержка перед началом анимации */
+            width: 115px;
+            background: #bae6fd;
+            transition-delay: 1s;
         }
 
         .btn-edit-expandable:hover .text {
             max-width: 100px;
             opacity: 1;
-            margin-left: 8px; /* Отступ между иконкой и текстом */
+            margin-left: 8px;
             transition-delay: 1s;
         }
 
@@ -232,7 +226,6 @@
             .history-scroll-container { max-height: none; overflow: visible; padding: 0; }
             .history-item.print-hidden { display: none !important; }
             .hide-custom-desc .history-desc { display: none !important; }
-
             .history-item { page-break-inside: avoid; border: 1px solid #ccc; margin-bottom: 20px; display: block; }
             .print-header { display: block !important; text-align: center; margin-bottom: 30px; }
             .print-header h1 { font-size: 24px; color: #000; }
@@ -265,7 +258,6 @@
         
         <h2 class="no-print" style="margin-top: 15px;">Мои сохраненные расчеты</h2>
 
-        <!-- Панель массовых действий -->
         <div class="bulk-actions no-print" id="bulk-actions-panel">
             <div class="bulk-controls">
                 <span>Выбрано расчетов: <strong id="selected-count">0</strong></span>
@@ -281,7 +273,6 @@
             </div>
         </div>
 
-        <!-- Чекбокс выбрать все -->
         <div class="select-all-container no-print" id="select-all-container" style="display: none;" onclick="toggleSelectAll()">
             <input type="checkbox" id="select-all-checkbox" class="custom-checkbox" onclick="event.stopPropagation(); toggleSelectAll();">
             <span>Выбрать все</span>
@@ -374,11 +365,15 @@
         } catch (e) { alert('Ошибка сети'); }
     }
 
-    // --- РЕДАКТИРОВАНИЕ ---
+    // --- РЕДАКТИРОВАНИЕ (ИСПРАВЛЕНА ЛОГИКА ОТКРЫТИЯ) ---
     function enableEdit(id, currentTitle, currentDesc) {
         const item = document.getElementById(`item-${id}`);
+        
+        // ПРИНУДИТЕЛЬНО ОТКРЫВАЕМ КАРТОЧКУ (добавляем класс active)
+        item.classList.add('active');
+
         const detailsDiv = item.querySelector('.history-details');
-        detailsDiv.onclick = (e) => e.stopPropagation();
+        detailsDiv.onclick = (e) => e.stopPropagation(); // Запрещаем клику внутри формы сворачивать карточку
 
         detailsDiv.innerHTML = `
             <div style="margin-bottom: 10px;">
@@ -450,11 +445,8 @@
                                     <span class="default-type-text" style="${item.custom_title ? 'font-size: 0.8em; color: #64748b; display: block;' : ''}">${defaultTypeName}</span>
                                 </div>
                                 
-                                <!-- Дата и кнопка на одной линии -->
                                 <div class="history-meta">
                                     <div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>
-                                    
-                                    <!-- Новая круглая кнопка с анимацией -->
                                     <button class="btn-edit-expandable no-print" onclick="event.stopPropagation(); enableEdit(${item.id}, '${safeTitle}', '${safeDesc}')" title="Изменить">
                                         <span class="icon">✏️</span>
                                         <span class="text">Изменить</span>
