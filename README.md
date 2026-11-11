@@ -1,11 +1,11 @@
 # Metrage | Метраж
 *название указано не как точный перевод слова метраж*
 
-**Metrage** — это веб-сервис, разработанный в рамках университетского проекта 
+**Metrage** — это веб-сервис, разработанный в рамках проекта для университета 
 
 Приложение помогает людям без профессионального опыта точно рассчитать необходимое количество материалов для ремонта, исключить ошибки в вычислениях и сэкономить бюджет.
 
-## ✨ Основные возможности:
+## Основные возможности:
 
 *   **Калькуляторы расчета материалов:** расчет краски, керамической плитки, обоев и напольных покрытий и т.д.
 *   **Умный расчет:** учет площади проемов, количества слоев краски, технологического запаса на подрезку и стыковку рисунка.
@@ -13,7 +13,7 @@
 *   **История расчетов:** сохранение всех вычислений в базу данных для доступа с любого устройства.
 *   **Интеграция с маркетплейсами:** прямые ссылки для поиска и покупки рассчитанных материалов на Wildberries, Ozon и Яндекс Маркет.
 
-## 🛠 Технологический стек:
+## Технологический стек:
 
 **Frontend:**
 *   HTML5, CSS3
@@ -24,7 +24,7 @@
 *   SQLite3
 *   Bcrypt.js & JSON Web Tokens (JWT)
 
-## 📂 Структура проекта:
+## Структура проекта:
 
 ```text
 📦 Metrage (корневая папка)
@@ -49,9 +49,9 @@
  ┗ 📜 README.md             # Описание проекта
 ```
 
-🚀 Как запустить проект
+## Как запустить проект
 
-Для запуска вам понадобится установленный Node.js (рекомендуется версия LTS) и редактор кода, например, Visual Studio Code.
+Для запуска вам понадобится установленный Node.js и редактор кода, например, Visual Studio Code.
 
 1. Установите зависимости сервера:
 Откройте терминал (или командную строку), перейдите в папку backend и установите необходимые библиотеки:
@@ -84,7 +84,7 @@ node server.js
 
 The application helps people without professional experience accurately calculate the required amount of materials for renovation, eliminate calculation errors, and save budget.
 
-## ✨ Key Features
+## Key Features
 
 *   **Material calculators:** calculation of paint, ceramic tiles, wallpaper, and floor coverings, etc.
 *   **Smart calculation:** accounting for the area of openings, number of paint coats, technological reserve for cutting, and pattern matching.
@@ -92,7 +92,7 @@ The application helps people without professional experience accurately calculat
 *   **Calculation history:** saving all calculations to a database for access from any device.
 *   **Marketplace integration:** direct links for searching and purchasing calculated materials on Wildberries, Ozon, and Yandex Market.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 **Frontend:**
 *   HTML5, CSS3
@@ -103,7 +103,7 @@ The application helps people without professional experience accurately calculat
 *   SQLite3
 *   Bcrypt.js & JSON Web Tokens (JWT)
 
-## 📂 Project Structure:
+## Project Structure:
 
 ```text
 📦 Metrage (root folder)
@@ -128,9 +128,9 @@ The application helps people without professional experience accurately calculat
  ┗ 📜 README.md             # Project description
 ```
 
- 🚀 How to run the project
+## How to run the project
 
-To run the project, you will need Node.js installed (LTS version is recommended) and a code editor like Visual Studio Code.
+To run the project, you will need Node.js installed and a code editor like Visual Studio Code.
 
 1. Install server dependencies:
 Open a terminal (or command prompt), navigate to the backend folder, and install the required libraries:
