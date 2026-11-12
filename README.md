@@ -24,31 +24,6 @@
 *   SQLite3
 *   Bcrypt.js & JSON Web Tokens (JWT)
 
-## Структура проекта:
-
-```text
-📦 Metrage (корневая папка)
- ┣ 📂 backend               # Серверная часть
- ┃ ┣ 📜 server.js           # Основной код сервера и API
- ┃ ┣ 📜 database.db         # База данных SQLite (создается автоматически)
- ┃ ┗ 📜 package.json        # Зависимости проекта
- ┣ 📂 css
- ┃ ┗ 📜 style.css           # Все стили
- ┣ 📂 js
- ┃ ┣ 📜 api.js              # Работа с сервером (fetch)
- ┃ ┣ 📜 auth.js             # Логика авторизации
- ┃ ┣ 📜 calculators.js      # Логика расчетов и маркетплейсов
- ┃ ┗ 📜 main.js             # Навигация и инициализация
- ┣ 📜 index.html            # Главная страница (меню зон ремонта)
- ┣ 📜 login.html            # Вход/Регистрация
- ┣ 📜 history.html          # Личный кабинет (история расчетов)
- ┣ 📜 paint.html            # Калькулятор краски
- ┣ 📜 tile.html             # Калькулятор плитки
- ┣ 📜 wallpaper.html        # Калькулятор обоев
- ┣ 📜 floor.html            # Калькулятор пола/потолка
- ┗ 📜 README.md             # Описание проекта
-```
-
 ## Как запустить проект
 
 Для запуска вам понадобится установленный Node.js и редактор кода, например, Visual Studio Code.
@@ -102,31 +77,6 @@ The application helps people without professional experience accurately calculat
 *   Node.js, Express
 *   SQLite3
 *   Bcrypt.js & JSON Web Tokens (JWT)
-
-## Project Structure:
-
-```text
-📦 Metrage (root folder)
- ┣ 📂 backend               # Server side
- ┃ ┣ 📜 server.js           # Main server and API code
- ┃ ┣ 📜 database.db         # SQLite database (created automatically)
- ┃ ┗ 📜 package.json        # Project dependencies
- ┣ 📂 css
- ┃ ┗ 📜 style.css           # All styles
- ┣ 📂 js
- ┃ ┣ 📜 api.js              # Server interaction (fetch)
- ┃ ┣ 📜 auth.js             # Authorization logic
- ┃ ┣ 📜 calculators.js      # Calculation and marketplace logic
- ┃ ┗ 📜 main.js             # Navigation and initialization
- ┣ 📜 index.html            # Main page (renovation zones menu)
- ┣ 📜 login.html            # Login/Registration
- ┣ 📜 history.html          # Personal account (calculation history)
- ┣ 📜 paint.html            # Paint calculator
- ┣ 📜 tile.html             # Tile calculator
- ┣ 📜 wallpaper.html        # Wallpaper calculator
- ┣ 📜 floor.html            # Floor/ceiling calculator
- ┗ 📜 README.md             # Project description
-```
 
 ## How to run the project
 
