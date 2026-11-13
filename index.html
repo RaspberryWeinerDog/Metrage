@@ -5,20 +5,67 @@
     <title>Metrage | Главная</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Стили для картинок в карточках */
-        .menu-card-img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover; /* Изображение заполняет квадрат без искажений */
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
+        /* Переопределяем сетку для 3 колонок */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Ровно 3 колонки */
+            gap: 20px;
         }
-        
-        /* Легкая анимация картинки при наведении на карточку */
-        .menu-card:hover .menu-card-img {
-            transform: scale(1.05);
+
+        /* Адаптивность для планшетов и телефонов */
+        @media (max-width: 900px) {
+            .menu-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .menu-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Обновленная карточка */
+        .menu-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text);
+            transition: 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Важно: обрезает картинку по закругленным углам */
+            padding: 0; /* Убираем внутренние отступы, чтобы картинка была от края до края */
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        /* Картинка на всю ширину, пропорции 1:1 */
+        .menu-card-img {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Соотношение сторон 1 к 1 */
+            object-fit: cover; /* Изображение заполняет квадрат без искажений */
+            display: block;
+            margin: 0;
+        }
+
+        /* Блок с текстом под картинкой */
+        .menu-card-text {
+            padding: 15px 20px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .menu-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #1e293b;
+        }
+        .menu-card p {
+            font-size: 0.9rem;
+            color: #64748b;
         }
     </style>
 </head>
@@ -39,28 +86,38 @@
     <div class="menu-grid">
         <a href="paint.html?title=Расчет краски для стен" class="menu-card">
             <img src="images/wall-paint.jpg" alt="Краска для стен" class="menu-card-img">
-            <h3>Краска</h3>
-            <p>Объем с учетом слоев</p>
+            <div class="menu-card-text">
+                <h3>Краска</h3>
+                <p>Объем с учетом слоев</p>
+            </div>
         </a>
         <a href="wallpaper.html" class="menu-card">
             <img src="images/wallpaper.jpg" alt="Обои" class="menu-card-img">
-            <h3>Обои</h3>
-            <p>Рулоны с подгоном</p>
+            <div class="menu-card-text">
+                <h3>Обои</h3>
+                <p>Рулоны с подгоном</p>
+            </div>
         </a>
         <a href="tile.html?title=Расчет плитки для стен" class="menu-card">
             <img src="images/wall-tile.jpg" alt="Плитка для стен" class="menu-card-img">
-            <h3>Плитка</h3>
-            <p>Количество упаковок</p>
+            <div class="menu-card-text">
+                <h3>Плитка</h3>
+                <p>Количество упаковок</p>
+            </div>
         </a>
         <a href="paint.html?title=Расчет штукатурки" class="menu-card">
             <img src="images/plaster.jpg" alt="Штукатурка" class="menu-card-img">
-            <h3>Штукатурка</h3>
-            <p>Расход на м²</p>
+            <div class="menu-card-text">
+                <h3>Штукатурка</h3>
+                <p>Расход на м²</p>
+            </div>
         </a>
         <a href="wallpaper.html?title=Расчет жидких обоев" class="menu-card">
             <img src="images/liquid-wallpaper.jpg" alt="Жидкие обои" class="menu-card-img">
-            <h3>Жидкие обои</h3>
-            <p>Расход смеси</p>
+            <div class="menu-card-text">
+                <h3>Жидкие обои</h3>
+                <p>Расход смеси</p>
+            </div>
         </a>
     </div>
 
@@ -71,33 +128,45 @@
     <div class="menu-grid">
         <a href="floor.html?title=Расчет ламината" class="menu-card">
             <img src="images/laminate.jpg" alt="Ламинат" class="menu-card-img">
-            <h3>Ламинат</h3>
-            <p>Количество упаковок</p>
+            <div class="menu-card-text">
+                <h3>Ламинат</h3>
+                <p>Количество упаковок</p>
+            </div>
         </a>
         <a href="floor.html?title=Расчет линолеума" class="menu-card">
             <img src="images/linoleum.jpg" alt="Линолеум" class="menu-card-img">
-            <h3>Линолеум</h3>
-            <p>Площадь покрытия</p>
+            <div class="menu-card-text">
+                <h3>Линолеум</h3>
+                <p>Площадь покрытия</p>
+            </div>
         </a>
         <a href="floor.html?title=Расчет ковролина" class="menu-card">
             <img src="images/carpet.jpg" alt="Ковролин" class="menu-card-img">
-            <h3>Ковролин</h3>
-            <p>Площадь покрытия</p>
+            <div class="menu-card-text">
+                <h3>Ковролин</h3>
+                <p>Площадь покрытия</p>
+            </div>
         </a>
         <a href="tile.html?title=Расчет напольной плитки" class="menu-card">
             <img src="images/floor-tile.jpg" alt="Напольная плитка" class="menu-card-img">
-            <h3>Плитка</h3>
-            <p>Керамогранит</p>
+            <div class="menu-card-text">
+                <h3>Плитка</h3>
+                <p>Керамогранит</p>
+            </div>
         </a>
         <a href="floor.html?title=Расчет наливного пола" class="menu-card">
             <img src="images/self-leveling-floor.jpg" alt="Наливной пол" class="menu-card-img">
-            <h3>Наливной пол</h3>
-            <p>Объем смеси</p>
+            <div class="menu-card-text">
+                <h3>Наливной пол</h3>
+                <p>Объем смеси</p>
+            </div>
         </a>
         <a href="floor.html?title=Расчет плинтуса" class="menu-card">
             <img src="images/baseboard.jpg" alt="Плинтус" class="menu-card-img">
-            <h3>Плинтус</h3>
-            <p>Погонные метры</p>
+            <div class="menu-card-text">
+                <h3>Плинтус</h3>
+                <p>Погонные метры</p>
+            </div>
         </a>
     </div>
 
@@ -108,23 +177,31 @@
     <div class="menu-grid">
         <a href="paint.html?title=Расчет краски для потолка" class="menu-card">
             <img src="images/ceiling-paint.jpg" alt="Краска для потолка" class="menu-card-img">
-            <h3>Краска</h3>
-            <p>Побелка</p>
+            <div class="menu-card-text">
+                <h3>Краска</h3>
+                <p>Побелка</p>
+            </div>
         </a>
         <a href="floor.html?title=Расчет натяжного потолка" class="menu-card">
             <img src="images/stretch-ceiling.jpg" alt="Натяжной потолок" class="menu-card-img">
-            <h3>Натяжной</h3>
-            <p>Площадь полотна</p>
+            <div class="menu-card-text">
+                <h3>Натяжной</h3>
+                <p>Площадь полотна</p>
+            </div>
         </a>
         <a href="tile.html?title=Расчет потолочной плитки" class="menu-card">
             <img src="images/ceiling-tile.jpg" alt="Потолочная плитка" class="menu-card-img">
-            <h3>Плитка</h3>
-            <p>Количество штук</p>
+            <div class="menu-card-text">
+                <h3>Плитка</h3>
+                <p>Количество штук</p>
+            </div>
         </a>
         <a href="floor.html?title=Расчет гипсокартона" class="menu-card">
             <img src="images/drywall.jpg" alt="Гипсокартон" class="menu-card-img">
-            <h3>Гипсокартон</h3>
-            <p>Количество листов</p>
+            <div class="menu-card-text">
+                <h3>Гипсокартон</h3>
+                <p>Количество листов</p>
+            </div>
         </a>
     </div>
 </div>
