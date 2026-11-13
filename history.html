@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Metrage | Мои расчеты</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .history-scroll-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 10px;
+            margin-top: 20px;
+        }
+        .history-scroll-container::-webkit-scrollbar { width: 8px; }
+        .history-scroll-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .history-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .history-scroll-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Стили карточек */
+        .history-item {
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fff;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .history-item:hover { background-color: #f8fafc; }
+        
+        /* Кастомный чекбокс */
+        .custom-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #cbd5e1;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.2s;
+        }
+        .custom-checkbox:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+        .custom-checkbox:checked::after {
+            content: '✔';
+            position: absolute;
+            color: white;
+            font-size: 14px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .history-content { flex-grow: 1; }
+        
+        .history-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .history-meta { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+        .history-date { font-size: 0.85rem; color: #64748b; }
+
+        .history-details {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed #cbd5e1;
+            font-size: 0.95rem;
+            cursor: default;
+        }
+        .history-item.active .history-details { display: block; }
+        .history-item.active { border-color: var(--primary); background-color: #f8fafc; }
+        .history-desc { margin-bottom: 10px; font-style: italic; color: #475569; }
+
+        /* Кнопка изменить */
+        .btn-edit-expandable {
+            background: #e0f2fe; color: #0284c7; border: none; border-radius: 20px;
+            height: 36px; width: 36px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease; overflow: hidden; padding: 0 10px;
+        }
+        .btn-edit-expandable .icon { font-size: 1.1rem; flex-shrink: 0; }
+        .btn-edit-expandable .text {
+            max-width: 0; opacity: 0; white-space: nowrap; font-size: 0.85rem;
+            font-weight: bold; margin-left: 0; transition: all 0.3s ease; overflow: hidden;
+        }
+        .btn-edit-expandable:hover { width: 115px; background: #bae6fd; transition-delay: 1s; }
+        .btn-edit-expandable:hover .text { max-width: 100px; opacity: 1; margin-left: 8px; transition-delay: 1s; }
+
+        /* Панель массовых действий */
+        .bulk-actions {
+            display: none; background: #eff6ff; border: 1px solid #bfdbfe;
+            padding: 15px; border-radius: 8px; margin-bottom: 15px; flex-direction: column; gap: 10px;
+        }
+        .bulk-actions.active { display: flex; }
+        .bulk-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .export-settings { display: flex; gap: 15px; align-items: center; font-size: 0.9rem; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); }
+        .export-settings label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .btn-export-selected { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-delete-selected { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        
+        .select-all-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-weight: bold; cursor: pointer; }
+        .edit-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; }
+        .btn-save-edit { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+
+        /* Заголовок и кнопка экспорта на одной линии */
+        .history-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .history-page-header h2 { margin: 0; }
+
+        /* =========================================
+           СТИЛИ ДЛЯ ПЕЧАТИ (ОФИЦИАЛЬНЫЙ ДОКУМЕНТ)
+           ========================================= */
+        .print-only { display: none; }
+
+        @media print {
+            @page { margin: 0; size: auto; }
+
+            body { 
+                background: white; 
+                padding: 20mm !important; 
+                margin: 0;
+                font-family: 'Times New Roman', Times, serif !important; 
+                font-size: 14px !important; 
+                color: black !important;
+            }
+            
+            header, .back-btn, .no-print, #btn-logout, #btn-history, .logo, 
+            .bulk-actions, .custom-checkbox, .select-all-container, 
+            .btn-edit-expandable, .history-page-header, .history-scroll-container::-webkit-scrollbar { 
+                display: none !important; 
+            }
+
+            .container, .calc-panel { 
+                max-width: 100%; 
+                margin: 0; 
+                padding: 0; 
+                box-shadow: none; 
+                border: none; 
+                background: transparent;
+            }
+            
+            .history-scroll-container { 
+                max-height: none; 
+                overflow: visible; 
+                padding: 0; 
+                margin: 0;
+            }
+
+            .history-item { 
+                page-break-inside: avoid; 
+                border: none;
+                border-bottom: 1px solid #000;
+                border-radius: 0;
+                margin-bottom: 15px; 
+                padding: 10px 0;
+                display: block; 
+                background: transparent !important;
+            }
+            
+            .history-item.print-hidden { display: none !important; }
+            .hide-custom-desc .history-desc { display: none !important; }
+
+            .history-details { display: block !important; border-top: none; margin-top: 5px; padding-top: 5px; }
+            .history-header { display: block; font-weight: bold; margin-bottom: 5px; }
+            .history-meta { display: none; }
+            
+            .custom-title-text, .default-type-text, .history-desc, .result-title, .history-details div {
+                font-family: 'Times New Roman', Times, serif !important;
+                font-size: 14px !important;
+                line-height: 1.4 !important;
+            }
+
+            .history-desc { font-style: italic; margin-bottom: 5px; }
+
+            .print-only { display: block !important; margin-bottom: 30px; }
+            .print-only h1 { text-align: center; font-size: 18px !important; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+            .print-only p { text-align: justify; margin-bottom: 15px; text-indent: 25px; }
+            
+            .doc-signatures { margin-top: 50px; display: flex; justify-content: space-between; }
+            .doc-signatures div { width: 45%; }
+            .doc-signatures .line { border-bottom: 1px solid #000; height: 20px; margin-bottom: 5px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="no-print">
+        <a href="index.html" class="logo">Metrage</a>
+        <div class="auth-status">
+            <span id="user-name" class="hidden"></span>
+            <a href="login.html" id="btn-login" class="btn-auth">Войти</a>
+            <button id="btn-logout" class="btn-auth btn-outline hidden" onclick="logout()">Выйти</button>
+            <a href="history.html" id="btn-history" class="btn-auth btn-outline hidden">Мои расчеты</a>
+        </div>
+    </header>
+
+    <div class="calc-panel">
+        
+        <div class="print-only">
+            <h1>Сводное заключение по расчету материалов</h1>
+            <p>Настоящий документ содержит предварительный расчет необходимого количества строительных и отделочных материалов, сформированный на основе введенных пользователем параметров помещений и характеристик материалов.</p>
+            <p>Расчеты произведены в соответствии с общепринятыми методиками. Документ предназначен для предварительного планирования закупок и может быть передан специалистам (прорабам, дизайнерам, консультантам строительных магазинов) для проверки или согласования сметы.</p>
+        </div>
+
+        <div class="no-print">
+            <a href="index.html" class="back-btn">← На главную</a>
+            
+            <!-- Обновленный блок: заголовок и кнопка на одной линии -->
+            <div class="history-page-header">
+                <h2>Мои сохраненные расчеты</h2>
+                <button id="btn-export-all" class="btn-auth" onclick="exportAllToPDF()" style="display: none;">Экспорт в PDF</button>
+            </div>
+        </div>
+
+        <div class="bulk-actions no-print" id="bulk-actions-panel">
+            <div class="bulk-controls">
+                <span>Выбрано расчетов: <strong id="selected-count">0</strong></span>
+                <button class="btn-delete-selected" onclick="deleteSelected()">🗑 Удалить выбранные</button>
+            </div>
+            <div class="bulk-controls" style="border-top: 1px solid #bfdbfe; padding-top: 10px;">
+                <div class="export-settings">
+                    <span>В PDF включать:</span>
+                    <label><input type="checkbox" id="opt-custom-title" checked> Названия</label>
+                    <label><input type="checkbox" id="opt-custom-desc" checked> Описания</label>
+                </div>
+                <button class="btn-export-selected" onclick="exportSelectedToPDF()">📥 Экспорт выбранных</button>
+            </div>
+        </div>
+
+        <div class="select-all-container no-print" id="select-all-container" style="display: none;" onclick="toggleSelectAll()">
+            <input type="checkbox" id="select-all-checkbox" class="custom-checkbox" onclick="event.stopPropagation(); toggleSelectAll();">
+            <span>Выбрать все</span>
+        </div>
+        
+        <div class="history-scroll-container" id="history-container">
+            <div id="history-list">Загрузка...</div>
+        </div>
+
+        <div class="print-only doc-signatures">
+            <div>
+                <p>Исполнитель:</p>
+                <div class="line"></div>
+                <p style="font-size: 12px; text-align: center;">(подпись)</p>
+            </div>
+            <div>
+                <p>Заказчик:</p>
+                <div class="line"></div>
+                <p style="font-size: 12px; text-align: center;">(подпись)</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+    // --- ЛОГИКА ВЫДЕЛЕНИЯ И ПАНЕЛИ ---
+    function updateBulkActions() {
+        const checkboxes = document.querySelectorAll('.history-checkbox:checked');
+        const count = checkboxes.length;
+        const panel = document.getElementById('bulk-actions-panel');
+        const countSpan = document.getElementById('selected-count');
+        const selectAllBox = document.getElementById('select-all-checkbox');
+        const allBoxes = document.querySelectorAll('.history-checkbox');
+
+        countSpan.textContent = count;
+        if (count > 0) panel.classList.add('active');
+        else panel.classList.remove('active');
+
+        if (count === allBoxes.length && allBoxes.length > 0) selectAllBox.checked = true;
+        else selectAllBox.checked = false;
+    }
+
+    function toggleSelectAll() {
+        const selectAllBox = document.getElementById('select-all-checkbox');
+        const allBoxes = document.querySelectorAll('.history-checkbox');
+        allBoxes.forEach(box => box.checked = selectAllBox.checked);
+        updateBulkActions();
+    }
+
+    // --- ЭКСПОРТ В PDF ---
+    function exportAllToPDF() {
+        document.querySelectorAll('.history-item').forEach(item => {
+            item.classList.remove('print-hidden', 'hide-custom-title', 'hide-custom-desc');
+        });
+        window.print();
+    }
+
+    function exportSelectedToPDF() {
+        const checkboxes = document.querySelectorAll('.history-checkbox:checked');
+        if (checkboxes.length === 0) return alert('Выберите хотя бы один расчет!');
+
+        const includeTitle = document.getElementById('opt-custom-title').checked;
+        const includeDesc = document.getElementById('opt-custom-desc').checked;
+        const selectedIds = Array.from(checkboxes).map(box => box.value);
+        
+        document.querySelectorAll('.history-item').forEach(item => {
+            const checkbox = item.querySelector('.history-checkbox');
+            const itemId = checkbox.value;
+
+            if (selectedIds.includes(itemId)) {
+                item.classList.remove('print-hidden');
+                if (!includeTitle) item.classList.add('hide-custom-title');
+                else item.classList.remove('hide-custom-title');
+                if (!includeDesc) item.classList.add('hide-custom-desc');
+                else item.classList.remove('hide-custom-desc');
+            } else {
+                item.classList.add('print-hidden');
+            }
+        });
+
+        window.print();
+
+        setTimeout(() => {
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.classList.remove('print-hidden', 'hide-custom-title', 'hide-custom-desc');
+            });
+        }, 1000);
+    }
+
+    // --- УДАЛЕНИЕ ---
+    async function deleteSelected() {
+        const checkboxes = document.querySelectorAll('.history-checkbox:checked');
+        const ids = Array.from(checkboxes).map(box => parseInt(box.value));
+        if (ids.length === 0) return;
+        if (!confirm(`Вы уверены, что хотите удалить ${ids.length} расчет(ов)?`)) return;
+
+        try {
+            const data = await fetchAPI('/history/delete', { method: 'POST', body: JSON.stringify({ ids }) });
+            if (data.success) loadHistory();
+            else alert('Ошибка при удалении');
+        } catch (e) { alert('Ошибка сети'); }
+    }
+
+    // --- РЕДАКТИРОВАНИЕ ---
+    function enableEdit(id, currentTitle, currentDesc) {
+        const item = document.getElementById(`item-${id}`);
+        item.classList.add('active'); 
+        const detailsDiv = item.querySelector('.history-details');
+        detailsDiv.onclick = (e) => e.stopPropagation();
+
+        detailsDiv.innerHTML = `
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.85rem; font-weight: bold;">Название:</label>
+                <input type="text" id="edit-title-${id}" class="edit-input" value="${currentTitle || ''}" placeholder="Введите название...">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label style="font-size: 0.85rem; font-weight: bold;">Описание:</label>
+                <textarea id="edit-desc-${id}" class="edit-input" rows="3" placeholder="Введите описание...">${currentDesc || ''}</textarea>
+            </div>
+            <button class="btn-save-edit" onclick="saveEdit(event, ${id})">Сохранить изменения</button>
+        `;
+    }
+
+    async function saveEdit(event, id) {
+        event.stopPropagation();
+        const newTitle = document.getElementById(`edit-title-${id}`).value;
+        const newDesc = document.getElementById(`edit-desc-${id}`).value;
+        const data = await fetchAPI(`/history/${id}`, { method: 'PUT', body: JSON.stringify({ custom_title: newTitle, description: newDesc }) });
+        if (data.success) loadHistory();
+        else alert('Ошибка при сохранении изменений');
+    }
+
+    // --- ЗАГРУЗКА СПИСКА ---
+    async function loadHistory() {
+        const list = document.getElementById('history-list');
+        const exportAllBtn = document.getElementById('btn-export-all');
+        const selectAllContainer = document.getElementById('select-all-container');
+        
+        if (!localStorage.getItem('token')) {
+            list.innerHTML = '<p>Пожалуйста, войдите в аккаунт.</p>';
+            return;
+        }
+
+        try {
+            const data = await fetchAPI('/history');
+            if (data.length === 0) {
+                list.innerHTML = '<p>У вас пока нет сохраненных расчетов.</p>';
+                exportAllBtn.style.display = 'none';
+                selectAllContainer.style.display = 'none';
+                updateBulkActions();
+                return;
+            }
+
+            exportAllBtn.style.display = 'block';
+            selectAllContainer.style.display = 'flex';
+
+            list.innerHTML = data.map(item => {
+                let detailsHtml = '';
+                if (item.calc_type === 'paint') detailsHtml = `<div class="result-title">Итог: ${item.result_data.cans} банок(и)</div><div>Площадь стен: ${item.result_data.details.sWalls} м²</div><div>Полезная площадь: ${item.result_data.details.sUseful} м²</div>`;
+                else if (item.calc_type === 'tile') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div><div>Требуется плиток: ${item.result_data.details.totalTiles} шт.</div>`;
+                else if (item.calc_type === 'wallpaper') detailsHtml = `<div class="result-title">Итог: ${item.result_data.rolls} рулонов</div><div>Периметр: ${item.result_data.details.perimeter} м</div><div>Площадь стен: ${item.result_data.details.sWalls} м²</div>`;
+                else if (item.calc_type === 'floor') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div>`;
+
+                const defaultTypeName = item.calc_type === 'paint' ? 'Краска' : item.calc_type === 'tile' ? 'Плитка' : item.calc_type === 'wallpaper' ? 'Обои' : 'Пол';
+                const descriptionHtml = item.description ? `<div class="history-desc">"${item.description}"</div>` : '';
+                
+                const safeTitle = (item.custom_title || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                const safeDesc = (item.description || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
+                return `
+                    <div class="history-item" id="item-${item.id}" onclick="this.classList.toggle('active')">
+                        <input type="checkbox" class="custom-checkbox history-checkbox no-print" value="${item.id}" onclick="event.stopPropagation(); updateBulkActions();">
+                        
+                        <div class="history-content">
+                            <div class="history-header">
+                                <div class="history-type">
+                                    <span class="custom-title-text">${item.custom_title ? item.custom_title : ''}</span>
+                                    <span class="default-type-text" style="${item.custom_title ? 'font-size: 0.8em; color: #64748b; display: block;' : ''}">${defaultTypeName}</span>
+                                </div>
+                                
+                                <div class="history-meta">
+                                    <div class="history-date">${new Date(item.created_at).toLocaleDateString()}</div>
+                                    <button class="btn-edit-expandable no-print" onclick="event.stopPropagation(); enableEdit(${item.id}, '${safeTitle}', '${safeDesc}')" title="Изменить">
+                                        <span class="icon">✏️</span>
+                                        <span class="text">Изменить</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="history-details">
+                                ${descriptionHtml}
+                                <div style="font-weight: bold; margin-bottom: 5px;">Детали расчета:</div>
+                                ${detailsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updateBulkActions();
+
+        } catch (error) {
+            list.innerHTML = 'Ошибка загрузки истории.';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadHistory);
+</script>
+</body>
+</html>

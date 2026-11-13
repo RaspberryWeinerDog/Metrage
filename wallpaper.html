@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Metrage | Калькулятор обоев</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <a href="index.html" class="logo">Metrage</a>
+        <div class="auth-status">
+            <span id="user-name" class="hidden"></span>
+            <a href="login.html" id="btn-login" class="btn-auth">Войти</a>
+            <button id="btn-logout" class="btn-auth btn-outline hidden" onclick="logout()">Выйти</button>
+            <a href="history.html" id="btn-history" class="btn-auth btn-outline hidden">Мои расчеты</a>
+        </div>
+    </header>
+
+    <div class="calc-panel">
+        <a href="index.html" class="back-btn">← Назад в меню</a>
+        <h2 id="page-title">Расчет обоев</h2>
+        
+        <form id="form-wallpaper" class="form-grid">
+            <div class="input-group"><label>Длина комнаты (м)</label><input type="number" step="0.1" id="w-length" required></div>
+            <div class="input-group"><label>Ширина комнаты (м)</label><input type="number" step="0.1" id="w-width" required></div>
+            <div class="input-group"><label>Высота стен (м)</label><input type="number" step="0.1" id="w-height" required></div>
+            <div class="input-group"><label>Ширина рулона (м)</label><input type="number" step="0.01" id="w-roll-w" required></div>
+            <div class="input-group"><label>Длина рулона (м)</label><input type="number" step="0.1" id="w-roll-l" required></div>
+            <div class="input-group"><label>Запас на стыковку (%)</label><input type="number" id="w-reserve" required></div>
+            <button type="submit" class="btn-calc">Рассчитать</button>
+        </form>
+
+        <div id="res-wallpaper" class="result-box"></div>
+        <button id="save-wallpaper" class="btn-calc btn-save hidden">Сохранить в личный кабинет</button>
+        
+        <div id="mp-wallpaper" class="marketplace-section">
+            <div class="mp-buttons">
+                <a href="#" id="link-wb-wallpaper" target="_blank" class="btn-mp btn-wb">Wildberries</a>
+                <a href="#" id="link-ozon-wallpaper" target="_blank" class="btn-mp btn-ozon">Ozon</a>
+                <a href="#" id="link-ya-wallpaper" target="_blank" class="btn-mp btn-ya">Яндекс Маркет</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/calculators.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('title')) document.getElementById('page-title').textContent = urlParams.get('title');
+</script>
+</body>
+</html>
