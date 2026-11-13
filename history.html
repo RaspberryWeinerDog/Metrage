@@ -108,21 +108,26 @@
         .edit-input { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; }
         .btn-save-edit { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
 
+        /* Заголовок и кнопка экспорта на одной линии */
+        .history-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .history-page-header h2 { margin: 0; }
+
         /* =========================================
            СТИЛИ ДЛЯ ПЕЧАТИ (ОФИЦИАЛЬНЫЙ ДОКУМЕНТ)
            ========================================= */
         .print-only { display: none; }
 
         @media print {
-            /* Убираем отступы страницы, чтобы скрыть URL и дату браузера */
-            @page { 
-                margin: 0; 
-                size: auto;
-            }
+            @page { margin: 0; size: auto; }
 
             body { 
                 background: white; 
-                /* Восстанавливаем отступы для текста, чтобы он не прилипал к краям */
                 padding: 20mm !important; 
                 margin: 0;
                 font-family: 'Times New Roman', Times, serif !important; 
@@ -132,7 +137,7 @@
             
             header, .back-btn, .no-print, #btn-logout, #btn-history, .logo, 
             .bulk-actions, .custom-checkbox, .select-all-container, 
-            .btn-edit-expandable, h2, .history-scroll-container::-webkit-scrollbar { 
+            .btn-edit-expandable, .history-page-header, .history-scroll-container::-webkit-scrollbar { 
                 display: none !important; 
             }
 
@@ -166,13 +171,7 @@
             .history-item.print-hidden { display: none !important; }
             .hide-custom-desc .history-desc { display: none !important; }
 
-            .history-details { 
-                display: block !important; 
-                border-top: none; 
-                margin-top: 5px; 
-                padding-top: 5px; 
-            }
-
+            .history-details { display: block !important; border-top: none; margin-top: 5px; padding-top: 5px; }
             .history-header { display: block; font-weight: bold; margin-bottom: 5px; }
             .history-meta { display: none; }
             
@@ -214,12 +213,15 @@
             <p>Расчеты произведены в соответствии с общепринятыми методиками. Документ предназначен для предварительного планирования закупок и может быть передан специалистам (прорабам, дизайнерам, консультантам строительных магазинов) для проверки или согласования сметы.</p>
         </div>
 
-        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="no-print">
             <a href="index.html" class="back-btn">← На главную</a>
-            <button id="btn-export-all" class="btn-auth" onclick="exportAllToPDF()" style="display: none;">📥 Экспорт всех в PDF</button>
+            
+            <!-- Обновленный блок: заголовок и кнопка на одной линии -->
+            <div class="history-page-header">
+                <h2>Мои сохраненные расчеты</h2>
+                <button id="btn-export-all" class="btn-auth" onclick="exportAllToPDF()" style="display: none;">Экспорт в PDF</button>
+            </div>
         </div>
-        
-        <h2 class="no-print" style="margin-top: 15px;">Мои сохраненные расчеты</h2>
 
         <div class="bulk-actions no-print" id="bulk-actions-panel">
             <div class="bulk-controls">
@@ -402,7 +404,6 @@
                 else if (item.calc_type === 'wallpaper') detailsHtml = `<div class="result-title">Итог: ${item.result_data.rolls} рулонов</div><div>Периметр: ${item.result_data.details.perimeter} м</div><div>Площадь стен: ${item.result_data.details.sWalls} м²</div>`;
                 else if (item.calc_type === 'floor') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div>`;
 
-                // УБРАЛИ СМАЙЛИКИ ИЗ ДЕФОЛТНЫХ НАЗВАНИЙ
                 const defaultTypeName = item.calc_type === 'paint' ? 'Краска' : item.calc_type === 'tile' ? 'Плитка' : item.calc_type === 'wallpaper' ? 'Обои' : 'Пол';
                 const descriptionHtml = item.description ? `<div class="history-desc">"${item.description}"</div>` : '';
                 
@@ -416,7 +417,6 @@
                         <div class="history-content">
                             <div class="history-header">
                                 <div class="history-type">
-                                    <!-- УБРАЛИ СМАЙЛИК БУЛАВКИ (📌) ИЗ КАСТОМНОГО НАЗВАНИЯ -->
                                     <span class="custom-title-text">${item.custom_title ? item.custom_title : ''}</span>
                                     <span class="default-type-text" style="${item.custom_title ? 'font-size: 0.8em; color: #64748b; display: block;' : ''}">${defaultTypeName}</span>
                                 </div>
