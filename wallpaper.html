@@ -22,29 +22,16 @@
         <h2 id="page-title">Расчет обоев</h2>
         
         <form id="form-wallpaper" class="form-grid">
-            <div class="input-group"><label>Длина комнаты (м)</label><input type="number" step="0.1" id="w-length" value="4"></div>
-            <div class="input-group"><label>Ширина комнаты (м)</label><input type="number" step="0.1" id="w-width" value="3"></div>
-            <div class="input-group"><label>Высота стен (м)</label><input type="number" step="0.1" id="w-height" value="2.7"></div>
-            <div class="input-group"><label>Ширина рулона (м)</label><input type="number" step="0.01" id="w-roll-w" value="0.53"></div>
-            <div class="input-group"><label>Длина рулона (м)</label><input type="number" step="0.1" id="w-roll-l" value="10.05"></div>
-            <div class="input-group"><label>Запас на стыковку (%)</label><input type="number" id="w-reserve" value="15"></div>
+            <div class="input-group"><label>Длина комнаты (м)</label><input type="number" step="0.1" id="w-length" required></div>
+            <div class="input-group"><label>Ширина комнаты (м)</label><input type="number" step="0.1" id="w-width" required></div>
+            <div class="input-group"><label>Высота стен (м)</label><input type="number" step="0.1" id="w-height" required></div>
+            <div class="input-group"><label>Ширина рулона (м)</label><input type="number" step="0.01" id="w-roll-w" required></div>
+            <div class="input-group"><label>Длина рулона (м)</label><input type="number" step="0.1" id="w-roll-l" required></div>
+            <div class="input-group"><label>Запас на стыковку (%)</label><input type="number" id="w-reserve" required></div>
             <button type="submit" class="btn-calc">Рассчитать</button>
         </form>
 
         <div id="res-wallpaper" class="result-box"></div>
-        
-        <!-- БЛОК ДЛЯ СОХРАНЕНИЯ С КОММЕНТАРИЯМИ -->
-        <div id="save-details-wallpaper" class="hidden" style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border);">
-            <div class="input-group" style="margin-bottom: 10px;">
-                <label>Название расчета (необязательно)</label>
-                <input type="text" id="w-custom-title" placeholder="Например: Обои в гостиную">
-            </div>
-            <div class="input-group">
-                <label>Описание (необязательно)</label>
-                <textarea id="w-description" rows="2" placeholder="Например: Флизелиновые, с рисунком" style="padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
-            </div>
-        </div>
-
         <button id="save-wallpaper" class="btn-calc btn-save hidden">Сохранить в личный кабинет</button>
         
         <div id="mp-wallpaper" class="marketplace-section">
