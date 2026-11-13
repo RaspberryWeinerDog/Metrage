@@ -111,15 +111,19 @@
         /* =========================================
            СТИЛИ ДЛЯ ПЕЧАТИ (ОФИЦИАЛЬНЫЙ ДОКУМЕНТ)
            ========================================= */
-        .print-only {
-            display: none;
-        }
+        .print-only { display: none; }
 
         @media print {
-            /* Скрываем все элементы интерфейса */
+            /* Убираем отступы страницы, чтобы скрыть URL и дату браузера */
+            @page { 
+                margin: 0; 
+                size: auto;
+            }
+
             body { 
                 background: white; 
-                padding: 0; 
+                /* Восстанавливаем отступы для текста, чтобы он не прилипал к краям */
+                padding: 20mm !important; 
                 margin: 0;
                 font-family: 'Times New Roman', Times, serif !important; 
                 font-size: 14px !important; 
@@ -132,7 +136,6 @@
                 display: none !important; 
             }
 
-            /* Убираем лишние обертки для печати */
             .container, .calc-panel { 
                 max-width: 100%; 
                 margin: 0; 
@@ -149,7 +152,6 @@
                 margin: 0;
             }
 
-            /* Оформление карточек как пунктов документа */
             .history-item { 
                 page-break-inside: avoid; 
                 border: none;
@@ -164,7 +166,6 @@
             .history-item.print-hidden { display: none !important; }
             .hide-custom-desc .history-desc { display: none !important; }
 
-            /* Принудительно раскрываем карточки для печати, чтобы был виден весь текст */
             .history-details { 
                 display: block !important; 
                 border-top: none; 
@@ -172,13 +173,8 @@
                 padding-top: 5px; 
             }
 
-            /* Форматирование текста */
-            .history-header { 
-                display: block; 
-                font-weight: bold;
-                margin-bottom: 5px;
-            }
-            .history-meta { display: none; /* Даты скрываем */ }
+            .history-header { display: block; font-weight: bold; margin-bottom: 5px; }
+            .history-meta { display: none; }
             
             .custom-title-text, .default-type-text, .history-desc, .result-title, .history-details div {
                 font-family: 'Times New Roman', Times, serif !important;
@@ -186,41 +182,15 @@
                 line-height: 1.4 !important;
             }
 
-            .history-desc {
-                font-style: italic;
-                margin-bottom: 5px;
-            }
+            .history-desc { font-style: italic; margin-bottom: 5px; }
 
-            /* Показываем шапку документа */
-            .print-only {
-                display: block !important;
-                margin-bottom: 30px;
-            }
-            .print-only h1 {
-                text-align: center;
-                font-size: 18px !important;
-                margin-bottom: 20px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-            }
-            .print-only p {
-                text-align: justify;
-                margin-bottom: 15px;
-                text-indent: 25px; /* Красная строка */
-            }
-            .doc-signatures {
-                margin-top: 50px;
-                display: flex;
-                justify-content: space-between;
-            }
-            .doc-signatures div {
-                width: 45%;
-            }
-            .doc-signatures .line {
-                border-bottom: 1px solid #000;
-                height: 20px;
-                margin-bottom: 5px;
-            }
+            .print-only { display: block !important; margin-bottom: 30px; }
+            .print-only h1 { text-align: center; font-size: 18px !important; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+            .print-only p { text-align: justify; margin-bottom: 15px; text-indent: 25px; }
+            
+            .doc-signatures { margin-top: 50px; display: flex; justify-content: space-between; }
+            .doc-signatures div { width: 45%; }
+            .doc-signatures .line { border-bottom: 1px solid #000; height: 20px; margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -238,7 +208,6 @@
 
     <div class="calc-panel">
         
-        <!-- ОФИЦИАЛЬНАЯ ШАПКА ДЛЯ ПЕЧАТИ (ВИДНА ТОЛЬКО ПРИ ЭКСПОРТЕ) -->
         <div class="print-only">
             <h1>Сводное заключение по расчету материалов</h1>
             <p>Настоящий документ содержит предварительный расчет необходимого количества строительных и отделочных материалов, сформированный на основе введенных пользователем параметров помещений и характеристик материалов.</p>
@@ -276,7 +245,6 @@
             <div id="history-list">Загрузка...</div>
         </div>
 
-        <!-- ПОДПИСИ ДЛЯ ДОКУМЕНТА -->
         <div class="print-only doc-signatures">
             <div>
                 <p>Исполнитель:</p>
@@ -377,7 +345,7 @@
     // --- РЕДАКТИРОВАНИЕ ---
     function enableEdit(id, currentTitle, currentDesc) {
         const item = document.getElementById(`item-${id}`);
-        item.classList.add('active'); // Принудительно открываем
+        item.classList.add('active'); 
         const detailsDiv = item.querySelector('.history-details');
         detailsDiv.onclick = (e) => e.stopPropagation();
 
@@ -434,8 +402,9 @@
                 else if (item.calc_type === 'wallpaper') detailsHtml = `<div class="result-title">Итог: ${item.result_data.rolls} рулонов</div><div>Периметр: ${item.result_data.details.perimeter} м</div><div>Площадь стен: ${item.result_data.details.sWalls} м²</div>`;
                 else if (item.calc_type === 'floor') detailsHtml = `<div class="result-title">Итог: ${item.result_data.packs} упаковок(ки)</div><div>Площадь поверхности: ${item.result_data.details.area} м²</div>`;
 
-                const defaultTypeName = item.calc_type === 'paint' ? '🎨 Краска' : item.calc_type === 'tile' ? '🧱 Плитка' : item.calc_type === 'wallpaper' ? '📜 Обои' : '🪵 Пол';
-                const descriptionHtml = item.description ? `<div class="history-desc">${item.description}</div>` : '';
+                // УБРАЛИ СМАЙЛИКИ ИЗ ДЕФОЛТНЫХ НАЗВАНИЙ
+                const defaultTypeName = item.calc_type === 'paint' ? 'Краска' : item.calc_type === 'tile' ? 'Плитка' : item.calc_type === 'wallpaper' ? 'Обои' : 'Пол';
+                const descriptionHtml = item.description ? `<div class="history-desc">"${item.description}"</div>` : '';
                 
                 const safeTitle = (item.custom_title || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
                 const safeDesc = (item.description || '').replace(/'/g, "\\'").replace(/"/g, "&quot;");
@@ -447,6 +416,7 @@
                         <div class="history-content">
                             <div class="history-header">
                                 <div class="history-type">
+                                    <!-- УБРАЛИ СМАЙЛИК БУЛАВКИ (📌) ИЗ КАСТОМНОГО НАЗВАНИЯ -->
                                     <span class="custom-title-text">${item.custom_title ? item.custom_title : ''}</span>
                                     <span class="default-type-text" style="${item.custom_title ? 'font-size: 0.8em; color: #64748b; display: block;' : ''}">${defaultTypeName}</span>
                                 </div>
