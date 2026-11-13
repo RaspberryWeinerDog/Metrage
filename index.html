@@ -8,7 +8,7 @@
         /* Переопределяем сетку для 3 колонок */
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Ровно 3 колонки */
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
 
@@ -18,6 +18,20 @@
         }
         @media (max-width: 600px) {
             .menu-grid { grid-template-columns: 1fr; }
+        }
+
+        /* НОВЫЙ СТИЛЬ ДЛЯ ЗАГОЛОВКОВ СЕКЦИЙ */
+        .section-title { 
+            font-size: 1.4rem; 
+            margin: 30px 0 20px 0; 
+            color: #1e293b; 
+            background-color: #e0f2fe; /* Нежно-голубой фон */
+            border-left: 6px solid var(--primary); /* Синяя линия слева */
+            padding: 8px 15px; /* Высота плашки */
+            border-radius: 0 8px 8px 0; /* Скругление только справа */
+            font-weight: bold; 
+            display: block;
+            width: 100%;
         }
 
         /* Обновленная карточка */
@@ -31,8 +45,8 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Важно: обрезает картинку по закругленным углам */
-            padding: 0; /* Убираем внутренние отступы, чтобы картинка была от края до края */
+            overflow: hidden;
+            padding: 0;
         }
         .menu-card:hover {
             transform: translateY(-5px);
@@ -43,8 +57,8 @@
         /* Картинка на всю ширину, пропорции 1:1 */
         .menu-card-img {
             width: 100%;
-            aspect-ratio: 1 / 1; /* Соотношение сторон 1 к 1 */
-            object-fit: cover; /* Изображение заполняет квадрат без искажений */
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
             display: block;
             margin: 0;
         }
@@ -121,8 +135,6 @@
         </a>
     </div>
 
-    <div class="separator"></div>
-
     <!-- СЕКЦИЯ: ПОЛ -->
     <h2 class="section-title">Пол</h2>
     <div class="menu-grid">
@@ -169,8 +181,6 @@
             </div>
         </a>
     </div>
-
-    <div class="separator"></div>
 
     <!-- СЕКЦИЯ: ПОТОЛОК -->
     <h2 class="section-title">Потолок</h2>
