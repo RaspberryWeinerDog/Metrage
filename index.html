@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <title>Metrage | Главная</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Стили для картинок в карточках */
+        .menu-card-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover; /* Изображение заполняет квадрат без искажений */
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        /* Легкая анимация картинки при наведении на карточку */
+        .menu-card:hover .menu-card-img {
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -20,11 +37,31 @@
     <!-- СЕКЦИЯ: СТЕНЫ -->
     <h2 class="section-title">Стены</h2>
     <div class="menu-grid">
-        <a href="paint.html?title=Расчет краски для стен" class="menu-card"><h3>🎨 Краска</h3><p>Объем с учетом слоев</p></a>
-        <a href="wallpaper.html" class="menu-card"><h3>📜 Обои</h3><p>Рулоны с подгоном</p></a>
-        <a href="tile.html?title=Расчет плитки для стен" class="menu-card"><h3>🧱 Плитка</h3><p>Количество упаковок</p></a>
-        <a href="paint.html?title=Расчет штукатурки" class="menu-card"><h3>🧱 Штукатурка</h3><p>Расход на м²</p></a>
-        <a href="wallpaper.html?title=Расчет жидких обоев" class="menu-card"><h3>💧 Жидкие обои</h3><p>Расход смеси</p></a>
+        <a href="paint.html?title=Расчет краски для стен" class="menu-card">
+            <img src="images/wall-paint.jpg" alt="Краска для стен" class="menu-card-img">
+            <h3>Краска</h3>
+            <p>Объем с учетом слоев</p>
+        </a>
+        <a href="wallpaper.html" class="menu-card">
+            <img src="images/wallpaper.jpg" alt="Обои" class="menu-card-img">
+            <h3>Обои</h3>
+            <p>Рулоны с подгоном</p>
+        </a>
+        <a href="tile.html?title=Расчет плитки для стен" class="menu-card">
+            <img src="images/wall-tile.jpg" alt="Плитка для стен" class="menu-card-img">
+            <h3>Плитка</h3>
+            <p>Количество упаковок</p>
+        </a>
+        <a href="paint.html?title=Расчет штукатурки" class="menu-card">
+            <img src="images/plaster.jpg" alt="Штукатурка" class="menu-card-img">
+            <h3>Штукатурка</h3>
+            <p>Расход на м²</p>
+        </a>
+        <a href="wallpaper.html?title=Расчет жидких обоев" class="menu-card">
+            <img src="images/liquid-wallpaper.jpg" alt="Жидкие обои" class="menu-card-img">
+            <h3>Жидкие обои</h3>
+            <p>Расход смеси</p>
+        </a>
     </div>
 
     <div class="separator"></div>
@@ -32,12 +69,36 @@
     <!-- СЕКЦИЯ: ПОЛ -->
     <h2 class="section-title">Пол</h2>
     <div class="menu-grid">
-        <a href="floor.html?title=Расчет ламината" class="menu-card"><h3>🪵 Ламинат</h3><p>Количество упаковок</p></a>
-        <a href="floor.html?title=Расчет линолеума" class="menu-card"><h3>🧻 Линолеум</h3><p>Площадь покрытия</p></a>
-        <a href="floor.html?title=Расчет ковролина" class="menu-card"><h3>🧶 Ковролин</h3><p>Площадь покрытия</p></a>
-        <a href="tile.html?title=Расчет напольной плитки" class="menu-card"><h3>🧱 Плитка</h3><p>Керамогранит</p></a>
-        <a href="floor.html?title=Расчет наливного пола" class="menu-card"><h3>🌊 Наливной пол</h3><p>Объем смеси</p></a>
-        <a href="floor.html?title=Расчет плинтуса" class="menu-card"><h3>📏 Плинтус</h3><p>Погонные метры</p></a>
+        <a href="floor.html?title=Расчет ламината" class="menu-card">
+            <img src="images/laminate.jpg" alt="Ламинат" class="menu-card-img">
+            <h3>Ламинат</h3>
+            <p>Количество упаковок</p>
+        </a>
+        <a href="floor.html?title=Расчет линолеума" class="menu-card">
+            <img src="images/linoleum.jpg" alt="Линолеум" class="menu-card-img">
+            <h3>Линолеум</h3>
+            <p>Площадь покрытия</p>
+        </a>
+        <a href="floor.html?title=Расчет ковролина" class="menu-card">
+            <img src="images/carpet.jpg" alt="Ковролин" class="menu-card-img">
+            <h3>Ковролин</h3>
+            <p>Площадь покрытия</p>
+        </a>
+        <a href="tile.html?title=Расчет напольной плитки" class="menu-card">
+            <img src="images/floor-tile.jpg" alt="Напольная плитка" class="menu-card-img">
+            <h3>Плитка</h3>
+            <p>Керамогранит</p>
+        </a>
+        <a href="floor.html?title=Расчет наливного пола" class="menu-card">
+            <img src="images/self-leveling-floor.jpg" alt="Наливной пол" class="menu-card-img">
+            <h3>Наливной пол</h3>
+            <p>Объем смеси</p>
+        </a>
+        <a href="floor.html?title=Расчет плинтуса" class="menu-card">
+            <img src="images/baseboard.jpg" alt="Плинтус" class="menu-card-img">
+            <h3>Плинтус</h3>
+            <p>Погонные метры</p>
+        </a>
     </div>
 
     <div class="separator"></div>
@@ -45,10 +106,26 @@
     <!-- СЕКЦИЯ: ПОТОЛОК -->
     <h2 class="section-title">Потолок</h2>
     <div class="menu-grid">
-        <a href="paint.html?title=Расчет краски для потолка" class="menu-card"><h3>🎨 Краска</h3><p>Побелка</p></a>
-        <a href="floor.html?title=Расчет натяжного потолка" class="menu-card"><h3>✨ Натяжной</h3><p>Площадь полотна</p></a>
-        <a href="tile.html?title=Расчет потолочной плитки" class="menu-card"><h3>🧱 Плитка</h3><p>Количество штук</p></a>
-        <a href="floor.html?title=Расчет гипсокартона" class="menu-card"><h3>🔲 Гипсокартон</h3><p>Количество листов</p></a>
+        <a href="paint.html?title=Расчет краски для потолка" class="menu-card">
+            <img src="images/ceiling-paint.jpg" alt="Краска для потолка" class="menu-card-img">
+            <h3>Краска</h3>
+            <p>Побелка</p>
+        </a>
+        <a href="floor.html?title=Расчет натяжного потолка" class="menu-card">
+            <img src="images/stretch-ceiling.jpg" alt="Натяжной потолок" class="menu-card-img">
+            <h3>Натяжной</h3>
+            <p>Площадь полотна</p>
+        </a>
+        <a href="tile.html?title=Расчет потолочной плитки" class="menu-card">
+            <img src="images/ceiling-tile.jpg" alt="Потолочная плитка" class="menu-card-img">
+            <h3>Плитка</h3>
+            <p>Количество штук</p>
+        </a>
+        <a href="floor.html?title=Расчет гипсокартона" class="menu-card">
+            <img src="images/drywall.jpg" alt="Гипсокартон" class="menu-card-img">
+            <h3>Гипсокартон</h3>
+            <p>Количество листов</p>
+        </a>
     </div>
 </div>
 
