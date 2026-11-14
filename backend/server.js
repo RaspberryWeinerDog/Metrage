@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 3000;
-const SECRET_KEY = 'super_secret_key_for_university_project'; // В реальности хранится в .env
+const SECRET_KEY = 'super_secret_key_for_university_project';
 
 app.use(cors());
 app.use(express.json());
@@ -17,9 +17,13 @@ const db = new sqlite3.Database('./database.db', (err) => {
     else console.log('Подключено к базе данных SQLite.');
 });
 
-// Создаем таблицы, если их нет
 db.serialize(() => {
-    // Таблица пользователей
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+    )`);
+    
     db.run(`CREATE TABLE IF NOT EXISTS history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
@@ -29,21 +33,14 @@ db.serialize(() => {
         FOREIGN KEY(user_id) REFERENCES users(id)
     )`);
 
-    // Безопасное добавление новых колонок (если их еще нет)
     db.all("PRAGMA table_info(history)", (err, columns) => {
         if (err) return console.error(err.message);
         const columnNames = columns.map(c => c.name);
-        
-        if (!columnNames.includes('custom_title')) {
-            db.run(`ALTER TABLE history ADD COLUMN custom_title TEXT`);
-        }
-        if (!columnNames.includes('description')) {
-            db.run(`ALTER TABLE history ADD COLUMN description TEXT`);
-        }
+        if (!columnNames.includes('custom_title')) db.run(`ALTER TABLE history ADD COLUMN custom_title TEXT`);
+        if (!columnNames.includes('description')) db.run(`ALTER TABLE history ADD COLUMN description TEXT`);
     });
 });
 
-// --- MIDDLEWARE ДЛЯ ПРОВЕРКИ ТОКЕНА ---
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -56,29 +53,48 @@ function authenticateToken(req, res, next) {
     });
 }
 
-// --- МАРШРУТЫ АВТОРИЗАЦИИ ---
-
-// Регистрация
+// --- АВТОРИЗАЦИЯ (ИСПРАВЛЕНА) ---
 app.post('/api/register', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) return res.status(400).json({ error: 'Введите логин и пароль' });
 
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, hashedPassword], function(err) {
-            if (err) return res.status(400).json({ error: 'Пользователь уже существует' });
-            res.json({ success: true, message: 'Регистрация успешна' });
-        });
-    } catch (error) {
-        res.status(500).json({ error: 'Ошибка сервера' });
-    }
+    // Сначала проверяем, есть ли уже такой пользователь
+    db.get(`SELECT id FROM users WHERE username = ?`, [username], async (err, row) => {
+        if (err) {
+            console.error("Ошибка БД при проверке:", err);
+            return res.status(500).json({ error: 'Ошибка базы данных' });
+        }
+        if (row) {
+            return res.status(400).json({ error: 'Пользователь с таким логином уже существует' });
+        }
+
+        // Если нет — хэшируем пароль и создаем
+        try {
+            const hashedPassword = await bcrypt.hash(password, 10);
+            db.run(`INSERT INTO users (username, password) VALUES (?, ?)`, [username, hashedPassword], function(err) {
+                if (err) {
+                    console.error("Ошибка БД при вставке:", err);
+                    return res.status(500).json({ error: 'Ошибка при сохранении пользователя' });
+                }
+                res.json({ success: true, message: 'Регистрация успешна' });
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Ошибка сервера' });
+        }
+    });
 });
 
-// Вход
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
     db.get(`SELECT * FROM users WHERE username = ?`, [username], async (err, user) => {
-        if (err || !user) return res.status(400).json({ error: 'Пользователь не найден' });
+        if (err) {
+            console.error("Ошибка БД при входе:", err);
+            return res.status(500).json({ error: 'Ошибка базы данных' });
+        }
+        if (!user) {
+            return res.status(400).json({ error: 'Пользователь не найден' });
+        }
         
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) return res.status(400).json({ error: 'Неверный пароль' });
@@ -88,24 +104,17 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-// --- МАРШРУТЫ ИСТОРИИ (ЗАЩИЩЕННЫЕ) ---
-
-// Получить историю пользователя
+// --- ИСТОРИЯ ---
 app.get('/api/history', authenticateToken, (req, res) => {
     db.all(`SELECT * FROM history WHERE user_id = ? ORDER BY created_at DESC`, [req.user.id], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        // Парсим JSON строку обратно в объект
         const formattedRows = rows.map(row => ({ ...row, result_data: JSON.parse(row.result_data) }));
         res.json(formattedRows);
     });
 });
 
-// Сохранить расчет в историю
 app.post('/api/history', authenticateToken, (req, res) => {
-    // Добавили custom_title и description в req.body
     const { calc_type, result_data, custom_title, description } = req.body; 
-    
-    // Обновили SQL запрос
     db.run(`INSERT INTO history (user_id, calc_type, result_data, custom_title, description) VALUES (?, ?, ?, ?, ?)`, 
         [req.user.id, calc_type, JSON.stringify(result_data), custom_title || null, description || null], 
         function(err) {
@@ -115,8 +124,33 @@ app.post('/api/history', authenticateToken, (req, res) => {
     );
 });
 
-// --- МАРШРУТЫ РАСЧЕТА (КАК БЫЛИ) ---
-// (Я оставил их прежними, они не требуют авторизации)
+app.put('/api/history/:id', authenticateToken, (req, res) => {
+    const { custom_title, description } = req.body;
+    const historyId = req.params.id;
+    db.run(`UPDATE history SET custom_title = ?, description = ? WHERE id = ? AND user_id = ?`, 
+        [custom_title || null, description || null, historyId, req.user.id], 
+        function(err) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0) return res.status(404).json({ error: 'Запись не найдена' });
+            res.json({ success: true });
+        }
+    );
+});
+
+app.post('/api/history/delete', authenticateToken, (req, res) => {
+    const { ids } = req.body;
+    if (!ids || !Array.isArray(ids) || ids.length === 0) return res.status(400).json({ error: 'Не переданы ID' });
+
+    const placeholders = ids.map(() => '?').join(',');
+    const params = [...ids, req.user.id];
+
+    db.run(`DELETE FROM history WHERE id IN (${placeholders}) AND user_id = ?`, params, function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true, deletedCount: this.changes });
+    });
+});
+
+// --- МАРШРУТЫ РАСЧЕТА ---
 app.post('/api/calculate/paint', (req, res) => {
     const { L, W, H, doorW, doorH, winW, winH, layers, coverage, canVol, reserve } = req.body;
     const sWalls = 2 * (L + W) * H;
@@ -152,41 +186,6 @@ app.post('/api/calculate/floor', (req, res) => {
     const totalArea = area * (1 + reserve / 100);
     const packs = Math.ceil(totalArea / packArea);
     res.json({ success: true, packs, details: { area: area.toFixed(2), totalArea: totalArea.toFixed(2) } });
-});
-
-// --- ОБНОВЛЕНИЕ ЗАПИСИ ИСТОРИИ ---
-app.put('/api/history/:id', authenticateToken, (req, res) => {
-    const { custom_title, description } = req.body;
-    const historyId = req.params.id;
-
-    // Проверяем, что запись принадлежит этому пользователю
-    db.run(`UPDATE history SET custom_title = ?, description = ? WHERE id = ? AND user_id = ?`, 
-        [custom_title || null, description || null, historyId, req.user.id], 
-        function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            if (this.changes === 0) return res.status(404).json({ error: 'Запись не найдена или нет прав' });
-            res.json({ success: true });
-        }
-    );
-});
-
-// --- МАССОВОЕ УДАЛЕНИЕ ЗАПИСЕЙ ИСТОРИИ ---
-app.post('/api/history/delete', authenticateToken, (req, res) => {
-    const { ids } = req.body;
-    
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-        return res.status(400).json({ error: 'Не переданы ID для удаления' });
-    }
-
-    // Формируем строку вида ?, ?, ? для SQL-запроса
-    const placeholders = ids.map(() => '?').join(',');
-    // Добавляем ID пользователя в конец массива параметров для безопасности
-    const params = [...ids, req.user.id];
-
-    db.run(`DELETE FROM history WHERE id IN (${placeholders}) AND user_id = ?`, params, function(err) {
-        if (err) return res.status(500).json({ error: err.message });
-        res.json({ success: true, deletedCount: this.changes });
-    });
 });
 
 app.listen(PORT, () => {
